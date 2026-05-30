@@ -6,17 +6,17 @@ const PAINS = [
   {
     icon: "✗",
     title: "50+ dependencies. 200 MB install. For what?",
-    body: "Most LLM frameworks pull in half of PyPI. Every import is a surprise. SynapseKit needs numpy and rank-bm25. That's it.",
+    body: "Most LLM frameworks pull in half of PyPI. Every import is a surprise. SynapseKit needs only numpy and rank-bm25.",
   },
   {
     icon: "✗",
     title: "Async was bolted on. Not designed in.",
-    body: "Partial async support is unpredictable and fragile. SynapseKit is async/await by default at every single layer.",
+    body: "Partial async support is unpredictable and fragile. SynapseKit is async/await native at every layer — no sync wrapper surprises.",
   },
   {
     icon: "✗",
     title: "Cost tracking sold separately as a SaaS product.",
-    body: "Observability shouldn't require a subscription. SynapseKit tracks cost, tokens, and latency out of the box — no SaaS needed.",
+    body: "Observability shouldn't require a subscription. SynapseKit tracks cost, tokens, and latency out of the box — locally.",
   },
 ];
 

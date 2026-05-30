@@ -106,15 +106,16 @@ export default function EvalCI() {
           <div
             ref={termRef}
             style={{
-              background: "#0e1420",
-              border: "1px solid rgba(255,255,255,0.07)",
+              background: "#0B1623",
+              border: "1px solid rgba(255,255,255,0.09)",
               borderRadius: "var(--radius-lg)",
               overflow: "hidden",
+              boxShadow: "0 4px 32px rgba(0,0,0,0.12)",
             }}
           >
             {/* Title bar */}
             <div
-              style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "12px 16px" }}
+              style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", padding: "12px 16px" }}
               className="flex items-center gap-2"
             >
               <span className="h-3 w-3 rounded-full bg-red-400" />

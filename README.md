@@ -1,5 +1,9 @@
 # SynapseKit — Marketing Website
 
+[![Website](https://img.shields.io/badge/website-synapse--kit.com-00A88C?logo=googlechrome&logoColor=white)](https://synapse-kit.com)
+[![Deploy](https://img.shields.io/badge/deploy-GitHub%20Pages-181717?logo=github&logoColor=white)](https://pages.github.com/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-22c55e)](LICENSE)
+
 The public-facing website for [SynapseKit](https://github.com/SynapseKit/SynapseKit), a lightweight Python framework for building LLM applications.
 
 Live at **[synapse-kit.com](https://synapse-kit.com)**

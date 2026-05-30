@@ -73,7 +73,7 @@ const SCENARIOS: Record<ScenarioKey, ScenarioDef> = {
       { nodeId: "query",  at: 0,    line: '>>> await rag.ask("What changed in Q1 2025?")' },
       { nodeId: "loader", at: 600,  line: "→ Loading from 12 documents (PDF, Notion, S3)..." },
       { nodeId: "vs",     at: 1300, line: "→ Searching pgvector — retrieved 8 chunks (score > 0.78)" },
-      { nodeId: "llm",    at: 2000, line: "→ Generating with claude-3-5-sonnet..." },
+      { nodeId: "llm",    at: 2000, line: "→ Generating with gpt-4o-mini..." },
       { nodeId: "answer", at: 2700, line: '✓ "Revenue grew 34% YoY driven by..."' },
     ],
     totalDuration: 5000,

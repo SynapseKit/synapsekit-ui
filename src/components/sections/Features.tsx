@@ -33,9 +33,9 @@ function Card({
       }}
       onMouseEnter={e => {
         const el = e.currentTarget as HTMLElement;
-        el.style.boxShadow = "0 8px 40px rgba(0,0,0,0.10)";
-        el.style.borderColor = "rgba(0,168,140,0.3)";
-        el.style.transform = "translateY(-2px)";
+        el.style.boxShadow = "0 8px 40px rgba(0,0,0,0.08)";
+        el.style.borderColor = "rgba(0,168,140,0.28)";
+        el.style.transform = "translateY(-3px)";
       }}
       onMouseLeave={e => {
         const el = e.currentTarget as HTMLElement;

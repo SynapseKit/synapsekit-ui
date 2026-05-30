@@ -25,6 +25,8 @@ export default function Nav() {
   return (
     <>
       <nav
+        role="navigation"
+        aria-label="Main navigation"
         style={{
           background: scrolled ? "rgba(246,247,249,0.9)" : "transparent",
           backdropFilter: scrolled ? "blur(16px)" : "none",

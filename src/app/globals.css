@@ -194,6 +194,19 @@ body {
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ─── Selection ─────────────────────────────────────────────────────────── */
+::selection {
+  background: rgba(0,168,140,0.18);
+  color: var(--text);
+}
+
+/* ─── Focus visible ──────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
 /* ─── Code syntax ───────────────────────────────────────────────────────── */
 .code-block {
   font-family: var(--font-jetbrains-mono), monospace;

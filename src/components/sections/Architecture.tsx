@@ -57,7 +57,7 @@ export default function Architecture() {
   const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
 
   return (
-    <section id="architecture" ref={sectionRef} style={{ background: "var(--bg)", padding: "6rem 1.5rem" }}>
+    <section id="architecture" ref={sectionRef} style={{ background: "var(--surface)", padding: "6rem 1.5rem" }}>
       <div style={{ maxWidth: "860px", margin: "0 auto" }}>
 
         {/* Header */}

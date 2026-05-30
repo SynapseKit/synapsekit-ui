@@ -27,13 +27,22 @@ export const metadata: Metadata = {
   title: "SynapseKit — LLM Framework for Python",
   description:
     "Async-native RAG, Agents, and Graph Workflows. 2 dependencies. 33 providers. No hidden chains. No SaaS. No lock-in.",
+  metadataBase: new URL("https://synapse-kit.com"),
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
   openGraph: {
     title: "SynapseKit — Build LLM Apps Without the Bloat",
     description:
       "Async-native RAG, Agents, and Graph Workflows. 2 dependencies. 33 providers.",
+    url: "https://synapse-kit.com",
+    siteName: "SynapseKit",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "SynapseKit — LLM Framework for Python",
+    description: "Async-native RAG, Agents, and Graph Workflows. 2 dependencies. 33 providers.",
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({

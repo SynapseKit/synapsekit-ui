@@ -12,6 +12,10 @@ const ROWS = [
   { label: "Graph workflows", sk: "✅ Built-in", a: "✅ Separate package", b: "❌ No" },
   { label: "Agent federation", sk: "✅ Built-in", a: "❌ No", b: "❌ No" },
   { label: "Reasoning LLMs", sk: "✅ Unified adapter", a: "⚠️ Manual", b: "⚠️ Manual" },
+  { label: "Structured output", sk: "✅ Provider-agnostic", a: "⚠️ Provider-specific", b: "⚠️ Provider-specific" },
+  { label: "Agent memory backends", sk: "✅ 4 built-in", a: "⚠️ Community plugins", b: "⚠️ Community plugins" },
+  { label: "Observability", sk: "✅ Prometheus + Grafana", a: "❌ No", b: "❌ No" },
+  { label: "Type safety", sk: "✅ Strict dataclasses", a: "⚠️ Partial", b: "⚠️ Partial" },
   { label: "License", sk: "Apache 2.0", a: "MIT", b: "MIT" },
 ];
 

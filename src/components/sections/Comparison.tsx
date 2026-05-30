@@ -15,7 +15,7 @@ const ROWS = [
   { label: "License", sk: "Apache 2.0", a: "MIT", b: "MIT" },
 ];
 
-const HEADERS = ["SynapseKit", "LangChain", "LlamaIndex"];
+const HEADERS = ["SynapseKit", "LangChain", "LlamaIndex"] as const;
 
 function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
   const isGood = value.startsWith("✅");

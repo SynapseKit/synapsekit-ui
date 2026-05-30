@@ -38,8 +38,8 @@ const PROVIDERS = [
   { name: "Databricks",    domain: "databricks.com" },
 ];
 
-const ROW1 = [...PROVIDERS.slice(0, 17), ...PROVIDERS.slice(0, 17)];
-const ROW2 = [...PROVIDERS.slice(17), ...PROVIDERS.slice(17)];
+const ROW1 = [...PROVIDERS.slice(0, 17), ...PROVIDERS.slice(0, 17)] as typeof PROVIDERS;
+const ROW2 = [...PROVIDERS.slice(17), ...PROVIDERS.slice(17)] as typeof PROVIDERS;
 
 const CATEGORIES = [
   {

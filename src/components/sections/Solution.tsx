@@ -28,7 +28,7 @@ const CHECKS = [
 ];
 
 export default function Solution() {
-  const { ref } = useReveal();
+  const { ref } = useReveal({ threshold: 0.12, rootMargin: "-40px" });
 
   return (
     <section

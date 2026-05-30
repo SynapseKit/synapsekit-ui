@@ -9,7 +9,7 @@ interface MeshNode {
   size: number;
 }
 
-function initNodes(w: number, h: number, count = 55): MeshNode[] {
+function initNodes(w: number, h: number, count = 48): MeshNode[] {
   return Array.from({ length: count }, () => ({
     x: Math.random() * w,
     y: Math.random() * h,
@@ -31,9 +31,9 @@ function drawMesh(
   ctx.fillStyle = "rgba(242,246,250,0.22)";
   ctx.fillRect(0, 0, w, h);
 
-  const DIST = 160;
-  const MOUSE_RADIUS = 180;
-  const MOUSE_FORCE  = 0.025;
+  const DIST = 150;
+  const MOUSE_RADIUS = 160;
+  const MOUSE_FORCE  = 0.022;
 
   nodes.forEach(n => {
     /* subtle mouse repulsion */

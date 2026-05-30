@@ -1,0 +1,95 @@
+# SynapseKit
+
+> Async-native Python framework for building LLM-powered applications: RAG pipelines, ReAct agents, graph workflows, and agent federation. 2 hard dependencies. Apache 2.0.
+
+## Overview
+
+SynapseKit is an open-source Python library for engineers who want to ship LLM-powered features without inheriting a large dependency tree or opaque abstractions. It is a lightweight alternative to LangChain and LlamaIndex.
+
+- Version: 1.9.1
+- License: Apache 2.0
+- Language: Python 3.9+
+- Hard dependencies: 2 (numpy, rank-bm25)
+- GitHub: https://github.com/SynapseKit/SynapseKit
+- PyPI: https://pypi.org/project/synapsekit/
+- Docs: https://synapsekit.github.io/synapsekit-docs/
+- Discord: https://discord.gg/PSuAXHRywJ
+
+## Key Capabilities
+
+- **33 LLM providers** — OpenAI, Anthropic Claude, Google Gemini, Mistral, Cohere, Ollama, LM Studio, xAI Grok, Groq, AWS Bedrock, Azure OpenAI, Together AI, Replicate, HuggingFace, GPT4All, vLLM, and more
+- **53 document loaders** — PDF, DOCX, HTML, Markdown, CSV, JSON, JSONL, Parquet, S3, Azure Blob, GCS, MongoDB, DynamoDB, Elasticsearch, Redis, BigQuery, YouTube, Sitemap, Airtable, HubSpot, Salesforce, Obsidian, OneDrive, Dropbox, and more
+- **11 vector stores** — Chroma, Pinecone, Weaviate, Qdrant, Milvus, pgvector, Redis, MongoDB Atlas, SQLiteVec, FAISS, in-memory
+- **47+ built-in tools** — web search, code execution, file I/O, calculator, weather, Wikipedia, SQL, REST APIs, browser automation (Playwright), and more
+- **RAG pipelines** — hybrid BM25+vector search, reranking, multimodal (audio/video/image), configurable chunking
+- **ReAct agents** — tool use with Reason+Act loop, custom tools as plain Python functions
+- **Graph workflows** — directed graphs with branching, loops, conditional routing, parallel execution, recursive subgraphs
+- **AgentFederation** — distributed multi-agent routing via in-memory or Redis registry
+- **Async-native** — every component supports async/await throughout
+- **Evaluation** — EvalDataset, EvalRecord, PromptOptimizer, EvalCI GitHub Action
+
+## Architecture
+
+SynapseKit is structured as a collection of composable modules:
+
+- `synapsekit.llms` — LLM provider adapters (all implement a common async interface)
+- `synapsekit.rag` — Document loaders, chunkers, embedders, vector stores, retrievers
+- `synapsekit.agents` — ReAct agent runtime, tool registry, AgentMemory
+- `synapsekit.graph` — Graph workflow engine with node/edge primitives
+- `synapsekit.federation` — AgentFederation, AgentRegistry (in-memory + Redis)
+- `synapsekit.eval` — EvalDataset, EvalRecord, PromptOptimizer, ContinuousTrainer
+- `synapsekit.tools` — 47+ built-in tool implementations
+- `synapsekit.output` — StructuredOutput with Pydantic validation and retries
+- `synapsekit.memory` — AgentMemory with SQLite/Redis/Postgres backends
+- `synapsekit.context` — SmartContextManager with Anthropic prompt caching
+
+## Installation
+
+```
+pip install synapsekit
+```
+
+Optional extras:
+- `pip install synapsekit[chroma]` — Chroma vector store
+- `pip install synapsekit[pinecone]` — Pinecone vector store
+- `pip install synapsekit[qdrant]` — Qdrant vector store
+- `pip install synapsekit[browser]` — Playwright browser tool
+- `pip install synapsekit[audio]` — Whisper audio loader
+
+Full installation guide: https://synapsekit.github.io/synapsekit-docs/getting-started/installation
+
+## Comparison
+
+| Feature | SynapseKit | LangChain | LlamaIndex |
+|---|---|---|---|
+| Hard dependencies | 2 | 60+ | 40+ |
+| Async-native | Yes | Partial | Partial |
+| LLM providers | 33 | 30+ | 20+ |
+| Document loaders | 53 | 100+ | 50+ |
+| Vector stores | 11 | 15+ | 15+ |
+| Graph workflows | Yes | LangGraph (separate) | Yes |
+| Agent federation | Yes | No | No |
+| Built-in eval | Yes | LangSmith (paid) | Yes |
+| EvalCI GitHub Action | Yes | No | No |
+| License | Apache 2.0 | MIT | MIT |
+| Telemetry | None | Optional | Optional |
+
+## Documentation
+
+- Getting started: https://synapsekit.github.io/synapsekit-docs/getting-started/installation
+- RAG pipelines: https://synapsekit.github.io/synapsekit-docs/rag/overview
+- Agents: https://synapsekit.github.io/synapsekit-docs/agents/overview
+- Graph workflows: https://synapsekit.github.io/synapsekit-docs/graph/overview
+- LLM providers: https://synapsekit.github.io/synapsekit-docs/llms/overview
+- Tools: https://synapsekit.github.io/synapsekit-docs/tools/overview
+- Evaluation: https://synapsekit.github.io/synapsekit-docs/eval/overview
+- Changelog: https://github.com/SynapseKit/SynapseKit/blob/main/CHANGELOG.md
+- Architecture: https://synapsekit.github.io/synapsekit-docs/architecture
+
+## Community
+
+- GitHub: https://github.com/SynapseKit/SynapseKit
+- Discord: https://discord.gg/PSuAXHRywJ
+- PyPI: https://pypi.org/project/synapsekit/
+- Issues: https://github.com/SynapseKit/SynapseKit/issues
+- Contributing: https://github.com/SynapseKit/SynapseKit/blob/main/CONTRIBUTING.md

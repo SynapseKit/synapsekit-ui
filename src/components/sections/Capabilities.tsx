@@ -10,12 +10,12 @@ const CONTENT: Record<Tab, { stats: { label: string; value: string }[]; points: 
   RAG: {
     stats: [
       { label: "Loaders", value: "53" },
-      { label: "Vector Stores", value: "22" },
+      { label: "Vector Stores", value: "11" },
       { label: "Retrieval Modes", value: "3" },
     ],
     points: [
       "53 loaders — PDF, Word, YouTube, S3, Notion, HubSpot, BigQuery, Salesforce, Airtable, Obsidian, and more",
-      "22 vector stores — Chroma, Pinecone, Weaviate, pgvector, Redis, MongoDB Atlas, SQLiteVec, and more",
+      "11 vector stores — Chroma, Pinecone, Weaviate, pgvector, Redis, MongoDB Atlas, SQLiteVec, and more",
       "Hybrid search — semantic vector search + multi-hop Knowledge Graph retrieval in one call",
       "Built-in RAG evaluation — cost/benefit tracking, Slack alert sinks, per-call scoring",
       "Anthropic prompt caching via SmartContextManager — cuts costs on repeated context",

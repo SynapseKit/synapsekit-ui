@@ -287,6 +287,7 @@ export default function AnimatedDemo() {
               key={tab}
               className={`tab-btn ${scenario === tab ? "active" : ""}`}
               onClick={() => { setScenario(tab); setCycleKey(0); }}
+              aria-pressed={scenario === tab}
             >
               {tab}
             </button>

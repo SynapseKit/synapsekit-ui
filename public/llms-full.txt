@@ -1,0 +1,314 @@
+# SynapseKit — Full Reference for LLMs
+
+> Async-native Python framework for building LLM-powered applications: RAG pipelines, ReAct agents, graph workflows, and agent federation. 2 hard dependencies. Apache 2.0.
+
+## Overview
+
+SynapseKit is an open-source Python library that gives engineers the full power of modern LLM application patterns — RAG, agents, graph workflows, evaluation — without the bloat of a large dependency tree or opaque framework magic.
+
+- Version: 1.9.1
+- License: Apache 2.0
+- Python: 3.9+
+- Hard dependencies: 2 (numpy, rank-bm25)
+- Installation: `pip install synapsekit`
+- GitHub: https://github.com/SynapseKit/SynapseKit
+- PyPI: https://pypi.org/project/synapsekit/
+- Docs: https://synapsekit.github.io/synapsekit-docs/
+- Discord: https://discord.gg/PSuAXHRywJ
+
+## Supported LLM Providers (33)
+
+OpenAI (GPT-4o, GPT-4, GPT-3.5), Anthropic Claude (claude-3-5-sonnet, claude-3-opus, claude-3-haiku), Google Gemini (1.5 Pro, 1.5 Flash, 2.0), Mistral (mistral-large, mistral-medium, mistral-small, mixtral), Cohere (command-r+, command-r), Ollama (any local model), LM Studio, xAI Grok, Groq (llama3, mixtral, gemma), AWS Bedrock, Azure OpenAI, Together AI, Replicate, HuggingFace, Novita AI, Writer AI, GPT4All, vLLM, Perplexity AI, DeepSeek, Qwen, Yi, Moonshot, Baidu ERNIE, Zhipu ChatGLM, Voyage, Fireworks AI, OpenRouter, Anyscale, OctoAI, Lepton AI.
+
+All providers implement the same async interface:
+
+```python
+from synapsekit.llms import OpenAILLM, AnthropicLLM, OllamaLLM
+
+# All interchangeable — one-line provider swap
+llm = OpenAILLM(model="gpt-4o")
+# llm = AnthropicLLM(model="claude-3-5-sonnet-20241022")
+# llm = OllamaLLM(model="llama3.2")
+
+response = await llm.achat("Explain RAG in one sentence.")
+print(response.content)
+```
+
+## RAG Pipeline
+
+A full RAG pipeline with document loading, chunking, embedding, vector storage, and retrieval:
+
+```python
+from synapsekit.rag import RAG
+from synapsekit.rag.loaders import PDFLoader, WebLoader
+from synapsekit.rag.vector_stores import ChromaStore
+from synapsekit.llms import OpenAILLM
+
+# Load documents
+loader = PDFLoader("docs/report.pdf")
+documents = await loader.aload()
+
+# Build the RAG pipeline
+rag = RAG(
+    llm=OpenAILLM(model="gpt-4o"),
+    vector_store=ChromaStore(collection="my-docs"),
+    chunk_size=512,
+    chunk_overlap=64,
+    top_k=5,
+)
+
+# Index
+await rag.aadd_documents(documents)
+
+# Query
+answer = await rag.aquery("What are the key findings?")
+print(answer.content)
+print(answer.sources)  # list of source chunks with metadata
+```
+
+## ReAct Agent
+
+An agent that uses tools in a Reason+Act loop:
+
+```python
+from synapsekit.agents import Agent
+from synapsekit.tools import WebSearchTool, CalculatorTool, WikipediaTool
+from synapsekit.llms import OpenAILLM
+
+agent = Agent(
+    llm=OpenAILLM(model="gpt-4o"),
+    tools=[WebSearchTool(), CalculatorTool(), WikipediaTool()],
+    max_iterations=10,
+    verbose=True,
+)
+
+result = await agent.arun("What is the current population of Tokyo, and how does it compare to New York City?")
+print(result.output)
+print(result.steps)   # full reasoning trace
+```
+
+### Custom Tools
+
+```python
+from synapsekit.tools import tool
+
+@tool(description="Fetch the latest price of a stock ticker symbol.")
+async def get_stock_price(ticker: str) -> str:
+    # your implementation
+    return f"${price}"
+
+agent = Agent(llm=llm, tools=[get_stock_price])
+```
+
+## Graph Workflow
+
+A directed graph workflow with branching and parallel execution:
+
+```python
+from synapsekit.graph import Graph, Node, Edge
+from synapsekit.llms import OpenAILLM
+
+llm = OpenAILLM(model="gpt-4o")
+
+# Define nodes
+async def classify(state):
+    result = await llm.achat(f"Classify this as 'technical' or 'general': {state['query']}")
+    state["category"] = result.content.strip().lower()
+    return state
+
+async def answer_technical(state):
+    result = await llm.achat(f"Answer this technical question: {state['query']}")
+    state["answer"] = result.content
+    return state
+
+async def answer_general(state):
+    result = await llm.achat(f"Answer this in plain language: {state['query']}")
+    state["answer"] = result.content
+    return state
+
+# Build graph
+graph = Graph()
+graph.add_node(Node("classify", classify))
+graph.add_node(Node("technical", answer_technical))
+graph.add_node(Node("general", answer_general))
+
+graph.add_edge(Edge("classify", "technical", condition=lambda s: s["category"] == "technical"))
+graph.add_edge(Edge("classify", "general", condition=lambda s: s["category"] == "general"))
+
+graph.set_entry("classify")
+
+result = await graph.arun({"query": "How does backpropagation work?"})
+print(result["answer"])
+```
+
+## Evaluation with @eval_case
+
+```python
+from synapsekit.eval import eval_case, EvalDataset, run_evals
+
+@eval_case(input="What is RAG?", expected_contains=["retrieval", "augmented", "generation"])
+async def test_rag_definition(input: str) -> str:
+    response = await rag.aquery(input)
+    return response.content
+
+@eval_case(input="What is the capital of France?", expected_contains=["Paris"])
+async def test_geography(input: str) -> str:
+    response = await llm.achat(input)
+    return response.content
+
+# Run all eval cases
+results = await run_evals()
+print(results.summary())  # pass rate, latency, cost breakdown
+```
+
+## AgentFederation
+
+Route tasks across specialized agents:
+
+```python
+from synapsekit.federation import AgentFederation, AgentRegistry
+from synapsekit.agents import Agent
+from synapsekit.llms import OpenAILLM, AnthropicLLM
+
+registry = AgentRegistry()
+
+# Register specialized agents
+registry.register("code_agent", Agent(
+    llm=AnthropicLLM(model="claude-3-5-sonnet-20241022"),
+    tools=[CodeExecutionTool()],
+    description="Handles coding and debugging tasks",
+))
+
+registry.register("research_agent", Agent(
+    llm=OpenAILLM(model="gpt-4o"),
+    tools=[WebSearchTool(), WikipediaTool()],
+    description="Handles research and information lookup tasks",
+))
+
+federation = AgentFederation(registry=registry, router_llm=OpenAILLM(model="gpt-4o-mini"))
+
+# The federation automatically routes to the right agent
+result = await federation.arun("Debug this Python function: ...")
+```
+
+## Document Loaders (53)
+
+**File formats:** PDFLoader, DOCXLoader, PPTXLoader, XLSXLoader, CSVLoader, JSONLoader, JSONLLoader, XMLLoader, HTMLLoader, MarkdownLoader, TextLoader, LaTeXLoader, TSVLoader, RTFLoader, EPUBLoader
+
+**Cloud storage:** S3Loader, AzureBlobLoader, GCSLoader, DropboxLoader, OneDriveLoader
+
+**Databases:** MongoDBLoader, DynamoDBLoader, RedisLoader, ElasticsearchLoader, BigQueryLoader, PostgreSQLLoader, SQLiteLoader
+
+**APIs & SaaS:** HubSpotLoader, SalesforceLoader, AirtableLoader, NotionLoader, ConfluenceLoader, JiraLoader, SlackLoader, GitHubLoader
+
+**Web:** WebLoader, SitemapLoader, YouTubeLoader, RSSLoader
+
+**Multimedia:** AudioLoader (Whisper), VideoLoader, ImageLoader
+
+**Productivity:** ObsidianLoader, ConfigLoader, EmailLoader
+
+**Code:** PythonLoader, JavaScriptLoader, GitLoader
+
+## Vector Stores (11)
+
+| Store | Hosted | Self-hosted | Notes |
+|---|---|---|---|
+| Chroma | No | Yes | Default, easy setup |
+| Pinecone | Yes | No | Serverless option |
+| Weaviate | Yes | Yes | GraphQL interface |
+| Qdrant | Yes | Yes | Rust-based, fast |
+| Milvus | No | Yes | Billion-scale |
+| pgvector | No | Yes | Postgres extension |
+| Redis | Yes | Yes | RedisSearch module |
+| MongoDB Atlas | Yes | No | Atlas Vector Search |
+| SQLiteVec | No | Yes | Zero infra, local |
+| FAISS | No | Yes | Facebook, in-memory |
+| InMemory | No | N/A | Testing and prototyping |
+
+## Comparison
+
+| Feature | SynapseKit | LangChain | LlamaIndex |
+|---|---|---|---|
+| Hard dependencies | **2** | 60+ | 40+ |
+| Async-native | **Yes** | Partial | Partial |
+| LLM providers | **33** | 30+ | 20+ |
+| Document loaders | **53** | 100+ | 50+ |
+| Vector stores | **11** | 15+ | 15+ |
+| Graph workflows | **Built-in** | LangGraph (separate pkg) | Yes |
+| Agent federation | **Yes** | No | No |
+| Built-in eval | **Yes (free)** | LangSmith (paid) | Yes |
+| EvalCI GitHub Action | **Yes** | No | No |
+| Prompt optimizer | **Yes** | No | No |
+| Continuous trainer | **Yes** | No | No |
+| Prometheus metrics | **Built-in** | No | No |
+| Helm chart | **Yes** | No | No |
+| Structured output | **Pydantic, retries** | Partial | Partial |
+| Agent memory | **4 backends** | Partial | Partial |
+| Context management | **Hierarchical + caching** | Basic | Basic |
+| Telemetry | **None** | Optional | Optional |
+| License | **Apache 2.0** | MIT | MIT |
+
+## Architecture Deep Dive
+
+SynapseKit follows a layered architecture:
+
+```
+synapsekit/
+├── llms/           # 33 provider adapters, all implementing BaseLLM
+├── rag/
+│   ├── loaders/    # 53 document loaders, all implementing BaseLoader
+│   ├── chunkers/   # Fixed, recursive, semantic, agentic chunking
+│   ├── embedders/  # OpenAI, Cohere, HuggingFace, local embeddings
+│   └── stores/     # 11 vector stores, all implementing BaseVectorStore
+├── agents/
+│   ├── react.py    # ReAct runtime
+│   ├── memory.py   # AgentMemory (SQLite/Redis/Postgres/in-memory)
+│   └── tools.py    # Tool registry and @tool decorator
+├── graph/          # Graph workflow engine
+├── federation/     # AgentFederation + AgentRegistry
+├── eval/           # EvalDataset, EvalRecord, PromptOptimizer
+├── output/         # StructuredOutput with Pydantic validation
+├── context/        # SmartContextManager + Anthropic caching
+├── metrics/        # PrometheusMetrics + Grafana dashboards
+└── tools/          # 47+ built-in tool implementations
+```
+
+Every component communicates through typed dataclasses. There are no hidden state mutations, no global registries, and no monkey-patching.
+
+## Key Design Principles
+
+1. **Minimal dependencies** — 2 hard deps. Optional extras pulled in only when needed.
+2. **Async-first** — Every I/O operation is async. Sync wrappers available for REPL use.
+3. **No hidden chains** — You compose pipelines explicitly. No magic `|` operators that hide data flow.
+4. **Provider-agnostic** — Swap any LLM, loader, or vector store by changing one import.
+5. **Observable** — Built-in Prometheus metrics and structured logging on every component.
+6. **Testable** — Every component is mockable. InMemory backends for all stores in tests.
+
+## EvalCI GitHub Action
+
+EvalCI (https://github.com/SynapseKit/evalci) is a free GitHub Action that runs your SynapseKit eval suite on every pull request and posts results as a PR comment.
+
+```yaml
+# .github/workflows/eval.yml
+name: Eval
+on: [pull_request]
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: SynapseKit/evalci@v1
+        with:
+          eval-path: tests/evals/
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+```
+
+## Community & Contributing
+
+- GitHub: https://github.com/SynapseKit/SynapseKit
+- Discord: https://discord.gg/PSuAXHRywJ
+- PyPI: https://pypi.org/project/synapsekit/
+- Issues: https://github.com/SynapseKit/SynapseKit/issues
+- Contributing guide: https://github.com/SynapseKit/SynapseKit/blob/main/CONTRIBUTING.md
+- Changelog: https://github.com/SynapseKit/SynapseKit/blob/main/CHANGELOG.md
+- Docs: https://synapsekit.github.io/synapsekit-docs/

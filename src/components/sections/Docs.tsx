@@ -5,8 +5,8 @@ import { useReveal } from "@/hooks/useReveal";
 const DOCS = [
   {
     label: "Quickstart",
-    tagline: "Up in 5 minutes",
-    description: "Build your first RAG pipeline or agent. Pip install, configure a provider, ship.",
+    tagline: "Up in 3 minutes",
+    description: "Build your first RAG pipeline or agent. pip install, configure a provider, ship.",
     href: "https://synapsekit.github.io/synapsekit-docs/docs/getting-started/quickstart",
     code: `from synapsekit import RAGPipeline\n\npipeline = RAGPipeline(llm=llm, store=store)\nresult = await pipeline.query("How does X work?")`,
     accent: "var(--accent)",

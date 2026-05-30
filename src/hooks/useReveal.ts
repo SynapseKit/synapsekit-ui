@@ -2,7 +2,12 @@
 
 import { useEffect, useRef, useCallback } from "react";
 
-export function useReveal(threshold = 0.15) {
+interface RevealOptions {
+  threshold?: number;
+  rootMargin?: string;
+}
+
+export function useReveal({ threshold = 0.15, rootMargin = "0px" }: RevealOptions = {}) {
   const elements = useRef<Set<Element>>(new Set());
 
   useEffect(() => {
@@ -15,12 +20,12 @@ export function useReveal(threshold = 0.15) {
           }
         });
       },
-      { threshold }
+      { threshold, rootMargin }
     );
 
     elements.current.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, [threshold]);
+  }, [threshold, rootMargin]);
 
   const ref = useCallback((el: HTMLElement | null) => {
     if (el) elements.current.add(el);

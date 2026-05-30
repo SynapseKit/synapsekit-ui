@@ -96,6 +96,7 @@ export default function Install() {
               key={tab}
               className={`tab-btn ${active === tab ? "active" : ""}`}
               onClick={() => setActive(tab)}
+              aria-pressed={active === tab}
             >
               {tab}
             </button>

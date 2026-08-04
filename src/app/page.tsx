@@ -12,6 +12,7 @@ import Install from "@/components/sections/Install";
 import Docs from "@/components/sections/Docs";
 import AnimatedDemo from "@/components/sections/AnimatedDemo";
 import Architecture from "@/components/sections/Architecture";
+import WhatsNew from "@/components/sections/WhatsNew";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       <main>
         <Hero />
         <AnimatedDemo />
+        <WhatsNew />
         <Architecture />
         <Problem />
         <Solution />

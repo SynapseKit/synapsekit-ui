@@ -182,7 +182,7 @@ export default function Ecosystem() {
             <span style={{ color: "var(--accent)" }}>already supported.</span>
           </h2>
           <p style={{ color: "var(--text-muted)", marginTop: "1rem", fontSize: "1rem" }}>
-            33 LLM providers behind one unified API. Swap without rewriting a line.
+            35 LLM providers behind one unified API. Swap without rewriting a line.
           </p>
         </div>
       </div>

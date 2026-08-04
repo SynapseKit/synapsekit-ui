@@ -9,13 +9,13 @@ type Tab = (typeof TABS)[number];
 const CONTENT: Record<Tab, { stats: { label: string; value: string }[]; points: string[] }> = {
   RAG: {
     stats: [
-      { label: "Loaders", value: "53" },
-      { label: "Vector Stores", value: "11" },
+      { label: "Loaders", value: "66" },
+      { label: "Vector Stores", value: "22" },
       { label: "Retrieval Modes", value: "3" },
     ],
     points: [
-      "53 loaders — PDF, Word, YouTube, S3, Notion, HubSpot, BigQuery, Salesforce, Airtable, Obsidian, and more",
-      "11 vector stores — Chroma, Pinecone, Weaviate, pgvector, Redis, MongoDB Atlas, SQLiteVec, and more",
+      "66 loaders — PDF, Word, YouTube, S3, Notion, HubSpot, BigQuery, Salesforce, Airtable, Obsidian, and more",
+      "22 vector stores — Chroma, Pinecone, Weaviate, pgvector, Redis, MongoDB Atlas, SQLiteVec, and more",
       "Hybrid search — semantic vector search + multi-hop Knowledge Graph retrieval in one call",
       "Built-in RAG evaluation — cost/benefit tracking, Slack alert sinks, per-call scoring",
       "Anthropic prompt caching via SmartContextManager — cuts costs on repeated context",
@@ -23,16 +23,16 @@ const CONTENT: Record<Tab, { stats: { label: string; value: string }[]; points: 
   },
   Agents: {
     stats: [
-      { label: "Built-in Tools", value: "47+" },
+      { label: "Built-in Tools", value: "50" },
       { label: "Memory Backends", value: "4" },
       { label: "Registry Modes", value: "2" },
     ],
     points: [
-      "ReAct loop and function calling — composable, inspectable, debuggable",
-      "47+ tools — Browser (Playwright), SQL, Shell, Python REPL, GitHub, Slack, Stripe, Twilio, Jira, and more",
-      "AgentFederation + AgentRegistry — route tasks across distributed agents (in-memory or Redis)",
-      "Persistent memory — episodic + semantic, 4 backends: SQLite, Redis, Postgres, in-memory",
-      "CostQualityRouter — learning-based LLM selection using Pareto frontier exploration/exploitation",
+      "Self-Evolving Agents — eval-gated, signed, reversible config evolution with canary rollout (v2.0)",
+      "Neuro-Symbolic reasoning — LLM proposes, a Z3 / SymPy / MiniZinc / Prolog solver verifies (v2.0)",
+      "Verifiable Agents — cryptographically signed, hash-chained audit trails you can independently verify (v2.0)",
+      "50 tools — Browser (Playwright), SQL, Shell, Python REPL, GitHub, Slack, Stripe, Twilio, Jira, and more",
+      "AgentFederation, AgentSwarm & Registry — market-based routing across distributed agents (in-memory or Redis)",
     ],
   },
   "Graph Workflows": {

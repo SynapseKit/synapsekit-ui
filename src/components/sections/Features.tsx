@@ -304,7 +304,7 @@ function StreamCard({ revealRef }: { revealRef: (el: HTMLElement | null) => void
     <Card revealRef={revealRef} delay="stagger-3">
       <Label>Output</Label>
       <Title>Streaming-First.</Title>
-      <Body>Token-level streaming is the default across all 33 providers.</Body>
+      <Body>Token-level streaming is the default across all 35 providers.</Body>
 
       <div ref={containerRef} style={{
         marginTop: "1.2rem",
@@ -333,7 +333,7 @@ function StreamCard({ revealRef }: { revealRef: (el: HTMLElement | null) => void
   );
 }
 
-/* ─── Card D: 33 Providers ──────────────────────────────────────────────── */
+/* ─── Card D: 35 Providers ──────────────────────────────────────────────── */
 const PROVIDERS = [
   "OpenAI","Anthropic","Gemini","Ollama","Bedrock",
   "Mistral","Groq","Together","DeepSeek","Cohere",
@@ -347,7 +347,7 @@ function ProvidersCard({ revealRef }: { revealRef: (el: HTMLElement | null) => v
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem" }}>
         <div>
           <Label>Ecosystem</Label>
-          <Title>33 Providers. One interface.</Title>
+          <Title>35 Providers. One interface.</Title>
           <Body style={{ maxWidth: "360px" }}>OpenAI, Anthropic, Gemini, Ollama, Bedrock and 28 more — same API, zero rewrites when you switch.</Body>
         </div>
         <div style={{

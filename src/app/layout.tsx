@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     default: "SynapseKit — Python LLM Framework",
   },
   description:
-    "Async-native Python LLM framework for RAG pipelines, ReAct agents, and graph workflows. A lightweight LangChain alternative with 2 dependencies, 33 LLM providers, 53 document loaders, and 11 vector stores. Open source, Apache 2.0.",
+    "Async-native Python LLM framework for RAG pipelines, ReAct agents, and graph workflows. A lightweight LangChain alternative with 2 dependencies, 35 LLM providers, 66 document loaders, and 22 vector stores. Open source, Apache 2.0.",
   keywords: [
     "python llm framework",
     "langchain alternative",
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "SynapseKit — Python LLM Framework",
     description:
-      "Async-native Python LLM framework for RAG pipelines, ReAct agents, and graph workflows. 2 dependencies, 33 providers, 53 loaders. No lock-in.",
+      "Async-native Python LLM framework for RAG pipelines, ReAct agents, and graph workflows. 2 dependencies, 35 providers, 66 loaders. No lock-in.",
     url: "https://synapse-kit.com",
     siteName: "SynapseKit",
     type: "website",
@@ -83,7 +83,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "SynapseKit — Python LLM Framework",
     description:
-      "Async-native Python LLM framework for RAG pipelines, ReAct agents, and graph workflows. 2 dependencies, 33 providers, 53 loaders. No lock-in.",
+      "Async-native Python LLM framework for RAG pipelines, ReAct agents, and graph workflows. 2 dependencies, 35 providers, 66 loaders. No lock-in.",
     site: "@synapsekitai",
     creator: "@synapsekitai",
     images: ["/og-image.png"],
@@ -120,15 +120,15 @@ const softwareApplicationSchema = {
   downloadUrl: "https://pypi.org/project/synapsekit/",
   softwareVersion: "1.9.1",
   description:
-    "Async-native Python framework for RAG pipelines, ReAct agents, and graph workflows. 2 dependencies. 33 LLM providers. No lock-in.",
+    "Async-native Python framework for RAG pipelines, ReAct agents, and graph workflows. 2 dependencies. 35 LLM providers. No lock-in.",
   featureList: [
     "RAG Pipelines",
     "ReAct Agents",
     "Graph Workflows",
     "AgentFederation",
-    "53 Document Loaders",
-    "33 LLM Providers",
-    "11 Vector Stores",
+    "66 Document Loaders",
+    "35 LLM Providers",
+    "22 Vector Stores",
     "47+ Built-in Tools",
     "Async-native",
     "EvalCI GitHub Action",
@@ -168,7 +168,7 @@ const faqSchema = {
       name: "What is SynapseKit?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "SynapseKit is an async-native, open-source Python framework for building LLM-powered applications. It provides RAG pipelines, ReAct agents, graph workflows, and AgentFederation with only 2 hard dependencies (numpy and rank-bm25). It supports 33 LLM providers, 53 document loaders, and 11 vector stores out of the box.",
+        text: "SynapseKit is an async-native, open-source Python framework for building LLM-powered applications. It provides RAG pipelines, ReAct agents, graph workflows, and AgentFederation with only 2 hard dependencies (numpy and rank-bm25). It supports 35 LLM providers, 66 document loaders, and 22 vector stores out of the box.",
       },
     },
     {
@@ -200,7 +200,7 @@ const faqSchema = {
       name: "Which LLM providers does SynapseKit support?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "SynapseKit supports 33 LLM providers including OpenAI, Anthropic Claude, Google Gemini, Mistral, Cohere, Ollama, LM Studio, xAI Grok, Groq, AWS Bedrock, Azure OpenAI, Together AI, Replicate, HuggingFace, and many more. Provider switching requires changing one line of code.",
+        text: "SynapseKit supports 35 LLM providers including OpenAI, Anthropic Claude, Google Gemini, Mistral, Cohere, Ollama, LM Studio, xAI Grok, Groq, AWS Bedrock, Azure OpenAI, Together AI, Replicate, HuggingFace, and many more. Provider switching requires changing one line of code.",
       },
     },
     {
@@ -208,7 +208,7 @@ const faqSchema = {
       name: "What is RAG and how does SynapseKit support it?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "RAG (Retrieval-Augmented Generation) lets LLMs answer questions using your documents. SynapseKit provides a complete RAG pipeline with 53 document loaders (PDF, web, S3, databases, APIs), 11 vector stores (Chroma, Pinecone, Weaviate, Qdrant, pgvector, etc.), hybrid BM25+vector search, and reranking — all composable with a few lines of Python.",
+        text: "RAG (Retrieval-Augmented Generation) lets LLMs answer questions using your documents. SynapseKit provides a complete RAG pipeline with 66 document loaders (PDF, web, S3, databases, APIs), 22 vector stores (Chroma, Pinecone, Weaviate, Qdrant, pgvector, etc.), hybrid BM25+vector search, and reranking — all composable with a few lines of Python.",
       },
     },
     {

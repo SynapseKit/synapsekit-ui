@@ -94,7 +94,7 @@ const PHRASES = [
   "With 2 dependencies.",
   "In pure Python.",
   "Async by default.",
-  "Across 33 providers.",
+  "Across 35 providers.",
 ];
 
 function useTypewriter(phrases: string[], speed = 55, pause = 2200, deleteSpeed = 28) {
@@ -128,7 +128,7 @@ function useTypewriter(phrases: string[], speed = 55, pause = 2200, deleteSpeed 
 
 /* ─── Stats ─────────────────────────────────────────────────────────────── */
 const STATS = [
-  { label: "LLM Providers",  value: 33 },
+  { label: "LLM Providers",  value: 35 },
   { label: "Loaders",        value: 53 },
   { label: "Vector Stores",  value: 22 },
   { label: "Tools",          value: 47, suffix: "+" },
@@ -341,7 +341,7 @@ export default function Hero() {
         }}>
           Async-native RAG, Agents, and Graph Workflows.{" "}
           <strong style={{ color: "var(--text)" }}>2 hard dependencies</strong> · {" "}
-          <strong style={{ color: "var(--text)" }}>33 providers</strong> · {" "}
+          <strong style={{ color: "var(--text)" }}>35 providers</strong> · {" "}
           No SaaS. No lock-in. No magic.
         </p>
 

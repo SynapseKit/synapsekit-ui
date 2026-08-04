@@ -24,13 +24,13 @@ const LAYERS = [
   },
   {
     label: "Data & Memory",
-    sublabel: "53 loaders, 11 vector stores, 20 retrieval strategies, 9 memory backends",
+    sublabel: "66 loaders, 22 vector stores, 20 retrieval strategies, 9 memory backends",
     color: "#F97316",
-    pills: ["53 Loaders", "11 Stores", "Hybrid Search", "9 Backends"],
+    pills: ["66 Loaders", "22 Stores", "Hybrid Search", "9 Backends"],
   },
   {
     label: "LLM Providers",
-    sublabel: "33 providers, one BaseLLM interface — streaming and structured output",
+    sublabel: "35 providers, one BaseLLM interface — streaming and structured output",
     color: "#EC4899",
     pills: ["OpenAI", "Anthropic", "Gemini", "+30 more"],
   },
@@ -172,9 +172,9 @@ export default function Architecture() {
         >
           <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap" }}>
             {[
-              ["33", "LLM Providers"],
-              ["53", "Loaders"],
-              ["11", "Vector Stores"],
+              ["35", "LLM Providers"],
+              ["66", "Loaders"],
+              ["22", "Vector Stores"],
               ["47+", "Tools"],
             ].map(([n, label]) => (
               <div key={label} style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>

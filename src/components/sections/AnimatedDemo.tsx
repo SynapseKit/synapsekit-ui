@@ -244,7 +244,7 @@ const SCENARIOS: Record<ScenarioKey, ScenarioDef> = {
       { id: "query",  label: "User Query",   sub: "natural language", cx: 90,  cy: 120 },
       { id: "loader", label: "Loader",        sub: "53 sources",       cx: 278, cy: 120 },
       { id: "vs",     label: "Vector Store",  sub: "11 backends",      cx: 468, cy: 120 },
-      { id: "llm",    label: "LLM",           sub: "33 providers",     cx: 652, cy: 120 },
+      { id: "llm",    label: "LLM",           sub: "35 providers",     cx: 652, cy: 120 },
       { id: "answer", label: "Answer",        sub: "streaming",        cx: 830, cy: 120 },
     ],
     edges: [

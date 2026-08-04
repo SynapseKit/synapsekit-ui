@@ -38,7 +38,7 @@ const DOCS = [
   },
   {
     label: "LLM Providers",
-    tagline: "33 providers · one interface",
+    tagline: "35 providers · one interface",
     description: "ReasoningLLM, CostQualityRouter, streaming, structured output across all providers.",
     href: "https://synapsekit.github.io/synapsekit-docs/docs/llms/overview",
     code: `llm = LLM(model="gpt-4o")       # OpenAI\nllm = LLM(model="claude-3-5-sonnet") # Anthropic\nllm = LLM(model="gemini-pro")   # Google`,

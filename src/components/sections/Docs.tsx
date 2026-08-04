@@ -13,6 +13,14 @@ const DOCS = [
     featured: true,
   },
   {
+    label: "SynapseKit Live",
+    tagline: "New in v2.0.1 · glass-box dashboard",
+    description: "Watch every LLM call, tool, retrieval, memory write, and cost stream to your browser in real time — zero extra dependencies.",
+    href: "https://synapsekit.github.io/synapsekit-docs/docs/observability/live",
+    code: `import synapsekit.live as live\n\nlive.enable()            # dashboard opens\nawait agent.arun("...")  # streams live`,
+    accent: "var(--accent)",
+  },
+  {
     label: "RAG Guide",
     tagline: "Retrieval-Augmented Generation",
     description: "Pipelines, loaders, hybrid retrieval, vector stores, evaluation.",

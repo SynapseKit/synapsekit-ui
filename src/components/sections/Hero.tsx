@@ -246,20 +246,23 @@ export default function Hero() {
       {/* Content */}
       <div style={{ position: "relative", zIndex: 2 }} className="mx-auto max-w-5xl text-center">
 
-        {/* Badge */}
-        <div style={{
-          display: "inline-flex", alignItems: "center", gap: "8px",
-          background: "rgba(0,168,140,0.08)",
-          border: "1px solid rgba(0,168,140,0.25)",
-          color: "var(--accent)",
-          fontFamily: "var(--font-jetbrains-mono)",
-          borderRadius: "99px", padding: "6px 16px",
-          fontSize: "11px", fontWeight: 500, letterSpacing: "0.05em",
-          marginBottom: "2.5rem",
-        }}>
+        {/* Badge — links to the changelog */}
+        <a
+          href="https://synapsekit.github.io/synapsekit-docs/docs/changelog"
+          style={{
+            display: "inline-flex", alignItems: "center", gap: "8px",
+            background: "rgba(0,168,140,0.08)",
+            border: "1px solid rgba(0,168,140,0.25)",
+            color: "var(--accent)",
+            fontFamily: "var(--font-jetbrains-mono)",
+            borderRadius: "99px", padding: "6px 16px",
+            fontSize: "11px", fontWeight: 500, letterSpacing: "0.05em",
+            marginBottom: "2.5rem", textDecoration: "none",
+          }}
+        >
           <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent)", animation: "blink 1.4s step-end infinite" }} />
-          v1.9.1 · ReasoningLLM · AgentFederation · EvalCI
-        </div>
+          New in v2.0.1 · SynapseKit Live · Docker · Digital Twin · Time-Travel →
+        </a>
 
         {/* Headline with glitch */}
         <div style={{ position: "relative", marginBottom: "1.75rem" }}>

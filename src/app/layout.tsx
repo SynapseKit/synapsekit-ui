@@ -65,7 +65,14 @@ export const metadata: Metadata = {
   creator: "SynapseKit",
   publisher: "SynapseKit",
   category: "technology",
-  icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     title: "SynapseKit: Python LLM Framework, LangChain Alternative",
     description:

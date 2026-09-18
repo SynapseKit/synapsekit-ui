@@ -5,15 +5,15 @@ import { useReveal } from "@/hooks/useReveal";
 
 const TERMINAL_LINES = [
   { text: "$ synapsekit eval run --suite tests/evals/", color: "rgba(255,255,255,0.9)" },
-  { text: "→ Running 24 eval cases against gpt-4o-mini...", color: "rgba(255,255,255,0.55)" },
-  { text: "→ Comparing against baseline (main@f3a9c1b)...", color: "rgba(255,255,255,0.55)" },
+  { text: "  Running 24 eval cases against gpt-4o-mini.", color: "rgba(255,255,255,0.55)" },
+  { text: "  Comparing against baseline (main@f3a9c1b).", color: "rgba(255,255,255,0.55)" },
   { text: "", color: "" },
-  { text: "  ✓ factual_accuracy     0.94  (+0.02)", color: "#00cc6a" },
-  { text: "  ✓ context_relevance    0.91  (±0.00)", color: "#00cc6a" },
-  { text: "  ✓ answer_faithfulness  0.88  (+0.03)", color: "#00cc6a" },
-  { text: "  ✓ cost_per_query       $0.0012  (-8%)", color: "#00cc6a" },
+  { text: "  PASS  factual_accuracy     0.94  (+0.02)", color: "#00cc6a" },
+  { text: "  PASS  context_relevance    0.91  (+0.00)", color: "#00cc6a" },
+  { text: "  PASS  answer_faithfulness  0.88  (+0.03)", color: "#00cc6a" },
+  { text: "  PASS  cost_per_query       $0.0012  (-8%)", color: "#00cc6a" },
   { text: "", color: "" },
-  { text: "  24/24 passed   0 regressions   GitHub PR: ✅ approved", color: "#ffffff" },
+  { text: "  24/24 passed, 0 regressions. GitHub PR: approved", color: "#ffffff" },
 ];
 
 export default function EvalCI() {
@@ -52,12 +52,6 @@ export default function EvalCI() {
           {/* Left: copy */}
           <div>
             <div ref={ref} className="reveal">
-              <p
-                style={{ color: "var(--accent)", fontFamily: "var(--font-jetbrains-mono)" }}
-                className="mb-3 text-xs font-medium tracking-widest uppercase"
-              >
-                EvalCI
-              </p>
               <h2
                 style={{ fontFamily: "var(--font-syne)", color: "var(--text)" }}
                 className="mb-5 text-3xl font-extrabold md:text-5xl"
@@ -68,20 +62,20 @@ export default function EvalCI() {
               </h2>
               <p style={{ color: "var(--text-muted)" }} className="mb-6 text-lg leading-relaxed">
                 EvalCI is a GitHub Action that runs your LLM evaluation suite on every pull
-                request — before anything merges. Catch regressions automatically, not
+                request, before anything merges. It catches regressions automatically, not
                 manually.
               </p>
 
               <ul className="mb-8 flex flex-col gap-3">
                 {[
-                  "Define eval cases with @eval_case decorator",
+                  "Define eval cases with the @eval_case decorator",
                   "Compare every PR against a baseline model output",
                   "Block merges when quality drops below threshold",
                   "Track factual accuracy, faithfulness, cost per query",
                 ].map((item) => (
                   <li key={item} className="flex items-center gap-3">
-                    <span style={{ color: "var(--green)" }} className="text-sm font-bold">
-                      ✓
+                    <span style={{ color: "var(--accent)" }} className="text-sm font-bold">
+                      +
                     </span>
                     <span style={{ color: "var(--text)" }} className="text-sm">
                       {item}
@@ -94,10 +88,13 @@ export default function EvalCI() {
                 href="https://synapsekit.github.io/synapsekit-docs/docs/evalci/overview"
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ background: "var(--accent)" }}
-                className="inline-block rounded-full px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                style={{
+                  background: "var(--accent)",
+                  borderRadius: "var(--radius)",
+                }}
+                className="inline-block px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
               >
-                View EvalCI docs →
+                View EvalCI docs
               </a>
             </div>
           </div>
@@ -110,7 +107,6 @@ export default function EvalCI() {
               border: "1px solid rgba(255,255,255,0.09)",
               borderRadius: "var(--radius-lg)",
               overflow: "hidden",
-              boxShadow: "0 4px 32px rgba(0,0,0,0.12)",
             }}
           >
             {/* Title bar */}
@@ -118,14 +114,11 @@ export default function EvalCI() {
               style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", padding: "12px 16px" }}
               className="flex items-center gap-2"
             >
-              <span className="h-3 w-3 rounded-full bg-red-400" />
-              <span className="h-3 w-3 rounded-full bg-yellow-400" />
-              <span className="h-3 w-3 rounded-full bg-green-400" />
               <span
                 style={{ color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-jetbrains-mono)" }}
-                className="ml-3 text-xs"
+                className="text-xs"
               >
-                evalci · PR #247
+                evalci, PR #247
               </span>
             </div>
 
@@ -145,18 +138,18 @@ export default function EvalCI() {
                     minHeight: "1.44rem",
                   }}
                 >
-                  {line.text || " "}
+                  {line.text || " "}
                 </div>
               ))}
               <span
                 className="cursor-blink"
                 style={{
-                  color: "var(--green)",
+                  color: "var(--accent)",
                   fontFamily: "var(--font-jetbrains-mono)",
                   fontSize: "0.8rem",
                 }}
               >
-                ▋
+                &#9611;
               </span>
             </div>
           </div>

@@ -4,19 +4,16 @@ import { useReveal } from "@/hooks/useReveal";
 
 const PAINS = [
   {
-    icon: "✗",
-    title: "50+ dependencies. 200 MB install. For what?",
-    body: "Most LLM frameworks pull in half of PyPI. Every import is a surprise. SynapseKit needs only numpy and rank-bm25.",
+    title: "Most frameworks pull in half of PyPI.",
+    body: "50+ dependencies for a 200 MB install is common. Every import is a surprise. SynapseKit needs only numpy and rank-bm25. Everything else is an optional extra.",
   },
   {
-    icon: "✗",
-    title: "Async was bolted on. Not designed in.",
-    body: "Partial async support is unpredictable and fragile. SynapseKit is async/await native at every layer — no sync wrapper surprises.",
+    title: "Async gets bolted on, not designed in.",
+    body: "Partial async support is unpredictable: some methods await, others block the event loop without warning. SynapseKit is async/await native at every layer.",
   },
   {
-    icon: "✗",
-    title: "Cost tracking sold separately as a SaaS product.",
-    body: "Observability shouldn't require a subscription. SynapseKit tracks cost, tokens, and latency out of the box — locally.",
+    title: "Cost tracking is usually a separate SaaS product.",
+    body: "Observability shouldn't require a subscription or an external agent. SynapseKit tracks cost, tokens, and latency out of the box, and streams it locally.",
   },
 ];
 
@@ -24,56 +21,35 @@ export default function Problem() {
   const { ref } = useReveal();
 
   return (
-    <section
-      id="problem"
-      style={{ background: "var(--dark-bg)" }}
-      className="px-6 py-24"
-    >
+    <section id="problem" style={{ background: "var(--surface2)" }} className="px-6 py-24">
       <div className="mx-auto max-w-6xl">
-        <div ref={ref} className="reveal mb-14 text-center">
-          <p
-            style={{ color: "var(--red)", fontFamily: "var(--font-jetbrains-mono)" }}
-            className="mb-3 text-xs font-medium tracking-widest uppercase"
-          >
-            The Problem
-          </p>
+        <div ref={ref} className="reveal mb-14 max-w-2xl">
           <h2
-            style={{ fontFamily: "var(--font-syne)", color: "#ffffff" }}
+            style={{ fontFamily: "var(--font-syne)", color: "var(--text)" }}
             className="text-3xl font-extrabold md:text-5xl"
           >
-            Existing frameworks are bloated mazes.
-            <br />
-            <span style={{ color: "var(--red)" }}>You deserve better.</span>
+            Existing frameworks accumulate weight.
           </h2>
+          <p style={{ color: "var(--text-muted)" }} className="mt-4 text-lg leading-relaxed">
+            Dependency bloat, inconsistent async, and paid observability are the
+            three complaints that come up most from teams evaluating alternatives.
+          </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-px md:grid-cols-3" style={{ background: "var(--border)" }}>
           {PAINS.map((pain, i) => (
-            <div
-              key={pain.title}
-              className={`reveal stagger-${i + 1}`}
-              ref={ref}
-            >
+            <div key={pain.title} className={`reveal stagger-${i + 1}`} ref={ref}>
               <div
-                style={{
-                  background: "var(--dark-surface)",
-                  border: "1px solid var(--dark-border)",
-                }}
-                className="h-full rounded-2xl p-7"
+                style={{ background: "var(--bg)" }}
+                className="h-full p-7"
               >
-                <span
-                  style={{ color: "var(--red)" }}
-                  className="mb-4 block text-2xl font-bold"
-                >
-                  {pain.icon}
-                </span>
                 <h3
-                  style={{ color: "#ffffff", fontFamily: "var(--font-syne)" }}
+                  style={{ color: "var(--text)", fontFamily: "var(--font-syne)" }}
                   className="mb-3 text-lg font-bold"
                 >
                   {pain.title}
                 </h3>
-                <p style={{ color: "rgba(255,255,255,0.55)" }} className="text-sm leading-relaxed">
+                <p style={{ color: "var(--text-muted)" }} className="text-sm leading-relaxed">
                   {pain.body}
                 </p>
               </div>

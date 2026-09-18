@@ -8,7 +8,7 @@ const TEAM = [
     login: "AmitoVrito",
     name: "Nautiverse",
     avatar: "https://avatars.githubusercontent.com/u/34062684?v=4",
-    bio: "NLP/LLM Engineer & Founder. Creator of SynapseKit: open-source LLM orchestration for engineers who ship.",
+    bio: "NLP/LLM engineer and founder. Created SynapseKit: open-source LLM orchestration for engineers who ship.",
     location: null,
     role: "Founder & Maintainer",
     contributions: 421,
@@ -19,7 +19,7 @@ const TEAM = [
     login: "DhruvGarg111",
     name: "Dhruv Garg",
     avatar: "https://avatars.githubusercontent.com/u/136477030?v=4",
-    bio: "Building distributed systems and AI infrastructure.",
+    bio: "Builds distributed systems and AI infrastructure.",
     location: null,
     role: "Core Contributor",
     contributions: 150,
@@ -30,7 +30,7 @@ const TEAM = [
     login: "Abhay-Mmmm",
     name: "Abhay Krishna",
     avatar: "https://avatars.githubusercontent.com/u/192120538?v=4",
-    bio: "Working on reasoning systems and LLM optimization.",
+    bio: "Works on reasoning systems and LLM optimization.",
     location: null,
     role: "Core Contributor",
     contributions: 55,
@@ -41,7 +41,7 @@ const TEAM = [
     login: "Chaturvediharsh123",
     name: "Harsh Chaturvedi",
     avatar: "https://avatars.githubusercontent.com/u/146837343?v=4",
-    bio: "BTech student passionate about AI/ML and intelligent systems.",
+    bio: "BTech student focused on AI/ML and intelligent systems.",
     location: null,
     role: "Contributor",
     contributions: 20,
@@ -52,7 +52,7 @@ const TEAM = [
     login: "adaumsilva",
     name: "Adam Silva",
     avatar: "https://avatars.githubusercontent.com/u/178027480?v=4",
-    bio: "AI Engineer — LLM Applications, RAG, AI Agents, Python, AWS Bedrock.",
+    bio: "AI engineer. LLM applications, RAG, AI agents, Python, AWS Bedrock.",
     location: "Silver Spring, MD",
     role: "Contributor",
     contributions: 2,
@@ -63,7 +63,7 @@ const TEAM = [
     login: "mikemolinet",
     name: "Mike Molinet",
     avatar: "https://avatars.githubusercontent.com/u/237856306?v=4",
-    bio: "Building at the intersection of AI and software.",
+    bio: "Builds at the intersection of AI and software.",
     location: null,
     role: "Contributor",
     contributions: 2,
@@ -103,7 +103,7 @@ const TEAM = [
     highlights: ["Code"],
     github: "https://github.com/mzl2233",
   },
-  // From .all-contributorsrc — contributed via PRs/reviews
+  // From .all-contributorsrc: contributed via PRs/reviews
   {
     login: "gordienkoas",
     name: "Gordienko Andrey",
@@ -174,7 +174,7 @@ const TEAM = [
     login: "passionworkeer",
     name: "Jianjun Wang",
     avatar: "https://avatars.githubusercontent.com/u/188482362?v=4",
-    bio: "Data Science @ SZTU · Building AI products · LLM infra & behavioral data systems.",
+    bio: "Data science at SZTU. Builds AI products, LLM infra, and behavioral data systems.",
     location: null,
     role: "Contributor",
     contributions: null,
@@ -185,7 +185,7 @@ const TEAM = [
     login: "zeel2104",
     name: "Zeel Desai",
     avatar: "https://avatars.githubusercontent.com/u/72783325?v=4",
-    bio: "AI + Full Stack Engineer. Open source contributor. Building scalable, real-world systems.",
+    bio: "AI and full stack engineer. Open source contributor building real-world systems.",
     location: null,
     role: "Contributor",
     contributions: null,
@@ -202,6 +202,50 @@ const TEAM = [
     contributions: null,
     highlights: ["Feedback"],
     github: "https://github.com/wu-xiaochen",
+  },
+  {
+    login: "Ashusf90",
+    name: "Harshit Gupta",
+    avatar: "https://avatars.githubusercontent.com/u/153393197?v=4",
+    bio: "Open source contributor.",
+    location: null,
+    role: "Contributor",
+    contributions: null,
+    highlights: ["Documentation"],
+    github: "https://github.com/Ashusf90",
+  },
+  {
+    login: "qorexdev",
+    name: "qorex",
+    avatar: "https://avatars.githubusercontent.com/u/248982649?v=4",
+    bio: "Open source contributor.",
+    location: null,
+    role: "Contributor",
+    contributions: null,
+    highlights: ["Code"],
+    github: "https://github.com/qorexdev",
+  },
+  {
+    login: "Premvkmishra",
+    name: "Prem Mishra",
+    avatar: "https://avatars.githubusercontent.com/u/138608347?v=4",
+    bio: "Open source contributor.",
+    location: null,
+    role: "Contributor",
+    contributions: null,
+    highlights: ["CAG/RAG router", "Orchestration eval", "Memory MCP server"],
+    github: "https://github.com/Premvkmishra",
+  },
+  {
+    login: "MohamedIdhries",
+    name: "MohamedIdhries",
+    avatar: "https://avatars.githubusercontent.com/u/186328670?v=4",
+    bio: "Open source contributor.",
+    location: null,
+    role: "Contributor",
+    contributions: null,
+    highlights: ["Code"],
+    github: "https://github.com/MohamedIdhries",
   },
 ];
 
@@ -231,17 +275,15 @@ export default function TeamPage() {
       <div className="mx-auto max-w-6xl px-6 py-20">
 
         {/* Header */}
-        <div style={{ maxWidth: "640px", marginBottom: "4rem" }}>
+        <div className="reveal" style={{ maxWidth: "640px", marginBottom: "4rem" }}>
           <p style={{
             fontFamily: "var(--font-jetbrains-mono)",
-            fontSize: "11px",
+            fontSize: "12px",
             fontWeight: 600,
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
             color: "var(--accent)",
             marginBottom: "1rem",
           }}>
-            Open Source · Apache 2.0
+            Open source, Apache 2.0
           </p>
           <h1 style={{
             fontFamily: "var(--font-syne)",
@@ -255,12 +297,14 @@ export default function TeamPage() {
             <span style={{ color: "var(--accent)" }}>for engineers.</span>
           </h1>
           <p style={{ color: "var(--text-muted)", fontSize: "1.1rem", lineHeight: 1.7 }}>
-            SynapseKit is fully community-driven. Every feature, every fix, every line of documentation was written by real people who wanted a better LLM framework and built it themselves.
+            SynapseKit is community-driven. Every feature, every fix, and every line of
+            documentation was written by people who wanted a better LLM framework and
+            built it themselves.
           </p>
         </div>
 
         {/* Core team */}
-        <div style={{ marginBottom: "4rem" }}>
+        <div className="reveal" style={{ marginBottom: "4rem" }}>
           <h2 style={{
             fontFamily: "var(--font-syne)",
             fontSize: "1.1rem",
@@ -269,13 +313,15 @@ export default function TeamPage() {
             marginBottom: "1.5rem",
             letterSpacing: "-0.01em",
           }}>
-            Core Team
+            Core team
           </h2>
 
           <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-            gap: "16px",
+            gap: "1px",
+            background: "var(--border)",
+            border: "1px solid var(--border)",
           }}>
             {CORE.map(member => (
               <a
@@ -287,44 +333,28 @@ export default function TeamPage() {
                   display: "flex",
                   gap: "1.25rem",
                   padding: "1.75rem",
-                  borderRadius: "20px",
-                  border: "1px solid var(--border)",
+                  border: "none",
                   background: "var(--surface)",
                   textDecoration: "none",
-                  transition: "border-color 0.2s, box-shadow 0.2s, transform 0.2s",
+                  transition: "background 0.15s",
                   alignItems: "flex-start",
                 }}
                 onMouseEnter={e => {
-                  const el = e.currentTarget;
-                  el.style.borderColor = "rgba(0,168,140,0.4)";
-                  el.style.boxShadow = "0 8px 40px rgba(0,168,140,0.10)";
-                  el.style.transform = "translateY(-2px)";
+                  (e.currentTarget as HTMLElement).style.background = "var(--subtle)";
                 }}
                 onMouseLeave={e => {
-                  const el = e.currentTarget;
-                  el.style.borderColor = "";
-                  el.style.boxShadow = "";
-                  el.style.transform = "";
+                  (e.currentTarget as HTMLElement).style.background = "var(--surface)";
                 }}
               >
                 {/* Avatar */}
-                <div style={{ position: "relative", flexShrink: 0 }}>
-                  <div style={{
-                    position: "absolute",
-                    inset: "-3px",
-                    borderRadius: "50%",
-                    background: "linear-gradient(135deg, var(--accent), transparent 65%)",
-                    opacity: 0.5,
-                  }} />
-                  <Image
-                    src={member.avatar}
-                    alt={member.name}
-                    width={72}
-                    height={72}
-                    style={{ borderRadius: "50%", display: "block", position: "relative" }}
-                    unoptimized
-                  />
-                </div>
+                <Image
+                  src={member.avatar}
+                  alt={member.name}
+                  width={64}
+                  height={64}
+                  style={{ borderRadius: "var(--radius)", display: "block", flexShrink: 0, border: "1px solid var(--border)" }}
+                  unoptimized
+                />
 
                 {/* Info */}
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -343,9 +373,9 @@ export default function TeamPage() {
                         fontSize: "10px",
                         fontWeight: 600,
                         color: "var(--accent)",
-                        background: "var(--accent-dim)",
-                        padding: "2px 7px",
-                        borderRadius: "5px",
+                        border: "1px solid var(--border)",
+                        padding: "1px 6px",
+                        borderRadius: "var(--radius)",
                       }}>
                         {member.contributions} commits
                       </span>
@@ -353,10 +383,8 @@ export default function TeamPage() {
                   </div>
                   <p style={{
                     fontFamily: "var(--font-jetbrains-mono)",
-                    fontSize: "10px",
+                    fontSize: "10.5px",
                     fontWeight: 600,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
                     color: "var(--text-muted)",
                     marginBottom: "0.6rem",
                   }}>
@@ -375,8 +403,8 @@ export default function TeamPage() {
                     {member.highlights.map(h => (
                       <span key={h} style={{
                         fontSize: "11px",
-                        padding: "2px 8px",
-                        borderRadius: "5px",
+                        padding: "2px 7px",
+                        borderRadius: "var(--radius)",
                         background: "var(--bg)",
                         border: "1px solid var(--border)",
                         color: "var(--text-muted)",
@@ -394,7 +422,7 @@ export default function TeamPage() {
         </div>
 
         {/* Contributors */}
-        <div style={{ marginBottom: "4rem" }}>
+        <div className="reveal" style={{ marginBottom: "4rem" }}>
           <h2 style={{
             fontFamily: "var(--font-syne)",
             fontSize: "1.1rem",
@@ -409,7 +437,9 @@ export default function TeamPage() {
           <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-            gap: "12px",
+            gap: "1px",
+            background: "var(--border)",
+            border: "1px solid var(--border)",
           }}>
             {CONTRIBUTORS.map(member => (
               <a
@@ -423,42 +453,26 @@ export default function TeamPage() {
                   alignItems: "center",
                   textAlign: "center",
                   padding: "1.5rem 1rem",
-                  borderRadius: "16px",
-                  border: "1px solid var(--border)",
+                  border: "none",
                   background: "var(--surface)",
                   textDecoration: "none",
-                  transition: "border-color 0.2s, box-shadow 0.2s, transform 0.2s",
+                  transition: "background 0.15s",
                 }}
                 onMouseEnter={e => {
-                  const el = e.currentTarget;
-                  el.style.borderColor = "rgba(0,168,140,0.35)";
-                  el.style.boxShadow = "0 6px 24px rgba(0,168,140,0.08)";
-                  el.style.transform = "translateY(-3px)";
+                  (e.currentTarget as HTMLElement).style.background = "var(--subtle)";
                 }}
                 onMouseLeave={e => {
-                  const el = e.currentTarget;
-                  el.style.borderColor = "";
-                  el.style.boxShadow = "";
-                  el.style.transform = "";
+                  (e.currentTarget as HTMLElement).style.background = "var(--surface)";
                 }}
               >
-                <div style={{ position: "relative", marginBottom: "0.75rem" }}>
-                  <div style={{
-                    position: "absolute",
-                    inset: "-3px",
-                    borderRadius: "50%",
-                    background: "linear-gradient(135deg, var(--accent), transparent 65%)",
-                    opacity: 0.3,
-                  }} />
-                  <Image
-                    src={member.avatar}
-                    alt={member.name}
-                    width={64}
-                    height={64}
-                    style={{ borderRadius: "50%", display: "block", position: "relative" }}
-                    unoptimized
-                  />
-                </div>
+                <Image
+                  src={member.avatar}
+                  alt={member.name}
+                  width={56}
+                  height={56}
+                  style={{ borderRadius: "var(--radius)", display: "block", marginBottom: "0.75rem", border: "1px solid var(--border)" }}
+                  unoptimized
+                />
                 <p style={{
                   fontFamily: "var(--font-syne)",
                   fontWeight: 700,
@@ -481,7 +495,7 @@ export default function TeamPage() {
                     <span key={h} style={{
                       fontSize: "10px",
                       padding: "2px 7px",
-                      borderRadius: "5px",
+                      borderRadius: "var(--radius)",
                       background: "var(--bg)",
                       border: "1px solid var(--border)",
                       color: "var(--text-muted)",
@@ -497,8 +511,8 @@ export default function TeamPage() {
         </div>
 
         {/* CTA */}
-        <div style={{
-          borderRadius: "24px",
+        <div className="reveal" style={{
+          borderRadius: "var(--radius)",
           border: "1px solid var(--border)",
           background: "var(--surface)",
           padding: "3rem",
@@ -519,7 +533,7 @@ export default function TeamPage() {
               Want to be on this page?
             </h3>
             <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>
-              Pick a good first issue and ship a PR. We review fast.
+              Pick a good first issue and ship a PR. Reviews are fast.
             </p>
           </div>
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
@@ -530,21 +544,20 @@ export default function TeamPage() {
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: "8px",
                 padding: "0.75rem 1.5rem",
-                borderRadius: "50px",
-                background: "var(--accent)",
-                color: "white",
+                borderRadius: "var(--radius)",
+                background: "var(--text)",
+                color: "var(--bg)",
                 fontFamily: "var(--font-syne)",
                 fontWeight: 700,
                 fontSize: "0.9rem",
                 textDecoration: "none",
                 transition: "opacity 0.2s",
               }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = "0.88"; }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = "0.85"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
             >
-              Open issues →
+              Open issues
             </a>
             <a
               href="https://github.com/SynapseKit/SynapseKit/blob/main/CONTRIBUTING.md"
@@ -553,9 +566,8 @@ export default function TeamPage() {
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: "8px",
                 padding: "0.75rem 1.5rem",
-                borderRadius: "50px",
+                borderRadius: "var(--radius)",
                 border: "1px solid var(--border)",
                 color: "var(--text-muted)",
                 fontFamily: "var(--font-syne)",
@@ -566,13 +578,13 @@ export default function TeamPage() {
               }}
               onMouseEnter={e => {
                 const el = e.currentTarget as HTMLElement;
-                el.style.borderColor = "rgba(0,168,140,0.4)";
+                el.style.borderColor = "var(--accent)";
                 el.style.color = "var(--accent)";
               }}
               onMouseLeave={e => {
                 const el = e.currentTarget as HTMLElement;
-                el.style.borderColor = "";
-                el.style.color = "";
+                el.style.borderColor = "var(--border)";
+                el.style.color = "var(--text-muted)";
               }}
             >
               Contributing guide

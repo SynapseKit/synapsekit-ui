@@ -24,7 +24,7 @@ export default function Footer() {
               <p style={{ color: "var(--text-muted)" }} className="text-sm leading-relaxed">
                 The LLM framework built for people who value simplicity.
                 <br />
-                Apache 2.0 · Built in Python
+                Apache 2.0. Built in Python.
               </p>
               {/* Social icons */}
               <div style={{ display: "flex", gap: "12px", marginTop: "1rem" }}>
@@ -100,7 +100,7 @@ export default function Footer() {
               <div key={col.heading}>
                 <p
                   style={{ color: "var(--text)", fontFamily: "var(--font-syne)" }}
-                  className="mb-3 text-sm font-bold uppercase tracking-wider"
+                  className="mb-3 text-sm font-bold"
                 >
                   {col.heading}
                 </p>
@@ -127,7 +127,7 @@ export default function Footer() {
             style={{ borderTop: "1px solid var(--border)", color: "var(--text-muted)" }}
             className="mt-10 pt-6 text-center text-xs"
           >
-            © {new Date().getFullYear()} SynapseKit Contributors · Apache 2.0 License
+            © {new Date().getFullYear()} SynapseKit Contributors. Apache 2.0 License.
           </div>
         </div>
       </div>

@@ -9,14 +9,14 @@ const FEATURES = [
     icon: "📡",
     label: "SynapseKit Live",
     description:
-      "A zero-dependency, real-time dashboard. Every LLM call, tool, retrieval, memory write, and cost streams to your browser — enable with one line, no extra deps.",
+      "A zero-dependency, real-time dashboard. Every LLM call, tool, retrieval, memory write, and cost streams to your browser. Enable with one line, no extra deps.",
     href: `${DOCS}/observability/live`,
   },
   {
     icon: "🐳",
     label: "Official Docker images",
     description:
-      "docker pull ghcr.io/synapsekit/synapsekit — core (CLI + lib, multi-arch amd64/arm64) and all-extras variants, published on every release.",
+      "docker pull ghcr.io/synapsekit/synapsekit: core (CLI + lib, multi-arch amd64/arm64) and all-extras variants, published on every release.",
     href: `${DOCS}/getting-started/docker`,
   },
   {
@@ -37,7 +37,7 @@ const FEATURES = [
     icon: "🪞",
     label: "Digital Twin Agent",
     description:
-      "Learns a versioned profile of your voice and drafts commits, PRs, and reviews in your style — gated by an enforced delegation policy.",
+      "Learns a versioned profile of your voice and drafts commits, PRs, and reviews in your style, gated by an enforced delegation policy.",
     href: `${DOCS}/agents/digital-twin`,
   },
   {
@@ -64,23 +64,23 @@ export default function WhatsNew() {
       <div className="mx-auto max-w-6xl">
         <div ref={ref} className="reveal mb-12 text-center">
           <p
-            style={{ color: "var(--accent)", fontFamily: "var(--font-jetbrains-mono)" }}
-            className="mb-3 text-xs font-medium tracking-widest uppercase"
+            style={{ color: "var(--text-muted)", fontFamily: "var(--font-jetbrains-mono)" }}
+            className="mb-3 text-xs font-medium"
           >
-            What&apos;s new · v2.0.1
+            What&apos;s new in v2.0.1
           </p>
           <h2
             style={{ fontFamily: "var(--font-syne)", color: "var(--text)" }}
             className="text-3xl font-extrabold md:text-5xl"
           >
-            Live observability &{" "}
+            Live observability and{" "}
             <span style={{ color: "var(--accent)" }}>new paradigm agents.</span>
           </h2>
           <p
             style={{ color: "var(--text-muted)" }}
             className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed md:text-base"
           >
-            Additive — no breaking changes. Seven new capabilities, plus a security pass to{" "}
+            Additive, no breaking changes. Seven new capabilities, plus a security pass to{" "}
             <strong style={{ color: "var(--text)" }}>0 known vulnerabilities</strong>.
           </p>
         </div>
@@ -90,8 +90,8 @@ export default function WhatsNew() {
             <a
               key={f.label}
               href={f.href}
-              style={{ border: "1px solid var(--border)", background: "var(--surface)" }}
-              className="group flex flex-col rounded-2xl p-6 no-underline transition-colors hover:border-[var(--accent)]"
+              style={{ border: "1px solid var(--border)", background: "var(--surface)", borderRadius: "var(--radius)" }}
+              className="group flex flex-col p-6 no-underline transition-colors hover:border-[var(--accent)]"
             >
               <div className="mb-3 text-2xl" aria-hidden>
                 {f.icon}
@@ -112,7 +112,7 @@ export default function WhatsNew() {
                 style={{ color: "var(--accent)", fontFamily: "var(--font-jetbrains-mono)" }}
                 className="mt-4 text-xs font-medium"
               >
-                Learn more →
+                Learn more
               </span>
             </a>
           ))}
@@ -124,7 +124,7 @@ export default function WhatsNew() {
             style={{ color: "var(--accent)", fontFamily: "var(--font-jetbrains-mono)" }}
             className="text-sm font-medium hover:underline"
           >
-            Read the full v2.0.1 changelog →
+            Read the full v2.0.1 changelog
           </a>
         </div>
       </div>

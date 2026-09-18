@@ -2,36 +2,34 @@
 
 /* ─── Design Tokens ─────────────────────────────────────────────────────── */
 :root {
-  --bg:           #F2F6FA;
+  --bg:           #F4F5F1;
   --surface:      #FFFFFF;
-  --surface2:     #E8EEF4;
-  --text:         #0D1824;
-  --text-muted:   #5A7080;
-  --accent:       #00A88C;
-  --accent-dim:   rgba(0,168,140,0.10);
-  --accent-glow:  rgba(0,168,140,0.22);
-  --orange:       #FF6B35;
-  --green:        #00A88C;
-  --red:          #FF3B3B;
-  --grid:         rgba(0,168,140,0.06);
-  --subtle:       #E8EEF4;
-  --border:       rgba(13,24,36,0.09);
-  --dark-bg:      #0D1824;
-  --dark-surface: #141E2C;
-  --dark-border:  rgba(255,255,255,0.07);
-  --radius:       12px;
-  --radius-lg:    20px;
-  --shadow:       0 1px 3px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
-  --shadow-lg:    0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3);
-  --shadow-accent:0 0 0 1px rgba(0,201,167,0.2), 0 8px 32px rgba(0,201,167,0.12);
+  --surface2:     #EBECE6;
+  --text:         #14171A;
+  --text-muted:   #5C6169;
+  --accent:       #0F9D74;
+  --accent-dim:   rgba(15,157,116,0.08);
+  --ember:        #C4531E;
+  --ember-dim:    rgba(196,83,30,0.08);
+  --red:          #C2392C;
+  --line:         rgba(20,23,26,0.05);
+  --grid:         rgba(20,23,26,0.05);
+  --subtle:       #EBECE6;
+  --border:       rgba(20,23,26,0.12);
+  --dark-bg:      #14171A;
+  --dark-surface: #1B1F23;
+  --dark-border:  rgba(255,255,255,0.08);
+  --radius:       3px;
+  --radius-lg:    4px;
+  --shadow:       none;
+  --shadow-lg:    none;
 }
 
 @theme inline {
   --color-bg:           var(--bg);
   --color-surface:      var(--surface);
   --color-accent:       var(--accent);
-  --color-green:        var(--green);
-  --color-orange:       var(--orange);
+  --color-ember:        var(--ember);
   --color-muted:        var(--text-muted);
   --color-dark-bg:      var(--dark-bg);
   --color-dark-surface: var(--dark-surface);
@@ -48,131 +46,99 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* ─── Scroll reveal ─────────────────────────────────────────────────────── */
+/* ─── Scroll reveal (single, quiet) ─────────────────────────────────────── */
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 .reveal.visible { opacity: 1; transform: none; }
 
-/* ─── Stagger delays ────────────────────────────────────────────────────── */
-.stagger-1 { transition-delay: 0.06s !important; }
-.stagger-2 { transition-delay: 0.12s !important; }
-.stagger-3 { transition-delay: 0.18s !important; }
-.stagger-4 { transition-delay: 0.24s !important; }
-.stagger-5 { transition-delay: 0.30s !important; }
-.stagger-6 { transition-delay: 0.36s !important; }
+.stagger-1 { transition-delay: 0.04s !important; }
+.stagger-2 { transition-delay: 0.08s !important; }
+.stagger-3 { transition-delay: 0.12s !important; }
+.stagger-4 { transition-delay: 0.16s !important; }
+.stagger-5 { transition-delay: 0.20s !important; }
+.stagger-6 { transition-delay: 0.24s !important; }
 
-/* ─── Hero animations ───────────────────────────────────────────────────── */
-@keyframes hero-float {
-  0%, 100% { transform: translateY(0px);  }
-  50%       { transform: translateY(-8px); }
+/* ─── Router diagram draw-in (hero, once) ───────────────────────────────── */
+@keyframes draw-line {
+  from { stroke-dashoffset: var(--len, 240); }
+  to   { stroke-dashoffset: 0; }
 }
-
-@keyframes shimmer-text {
-  0%   { background-position: -300% center; }
-  100% { background-position:  300% center; }
+.router-line {
+  stroke-dasharray: var(--len, 240);
+  stroke-dashoffset: var(--len, 240);
+  animation: draw-line 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: var(--delay, 0s);
 }
-
-.accent-gradient {
-  background: linear-gradient(90deg,
-    #00A88C 0%,
-    #00D4B0 20%,
-    #0D1824 40%,
-    #FF6B35 60%,
-    #00A88C 80%,
-    #00D4B0 100%
-  );
-  background-size: 300% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: shimmer-text 5s linear infinite;
+@keyframes node-in {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.router-node {
+  opacity: 0;
+  animation: node-in 0.4s ease forwards;
+  animation-delay: var(--delay, 0s);
+  transform-origin: center;
 }
 
-/* Glitch layers */
-@keyframes glitch-clip1 {
-  0%, 87%, 100%  { clip-path: inset(0 0 100% 0); transform: translate(0); }
-  88%            { clip-path: inset(0 0 60% 0);  transform: translate(-4px, 0); }
-  89%            { clip-path: inset(35% 0 45% 0); transform: translate(4px, 0); }
-  90%            { clip-path: inset(70% 0 0 0);  transform: translate(-2px, 0); }
-  91%            { clip-path: inset(0 0 100% 0); transform: translate(0); }
-}
-@keyframes glitch-clip2 {
-  0%, 87%, 100%  { clip-path: inset(0 0 100% 0); transform: translate(0); }
-  88%            { clip-path: inset(55% 0 20% 0); transform: translate(5px, 0); }
-  89%            { clip-path: inset(0 0 70% 0);   transform: translate(-5px, 0); }
-  90%            { clip-path: inset(20% 0 60% 0); transform: translate(3px, 0); }
-  91%            { clip-path: inset(0 0 100% 0);  transform: translate(0); }
+@media (prefers-reduced-motion: reduce) {
+  .router-line, .router-node, .reveal {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    stroke-dashoffset: 0 !important;
+  }
 }
 
-@keyframes typewriter-blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
-}
-
-/* ─── Marquee ───────────────────────────────────────────────────────────── */
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-@keyframes marquee-reverse {
-  from { transform: translateX(-50%); }
-  to   { transform: translateX(0); }
-}
-.marquee-track { animation: marquee 32s linear infinite; }
-.marquee-track-reverse { animation: marquee-reverse 26s linear infinite; }
-.marquee-wrapper:hover .marquee-track,
-.marquee-wrapper:hover .marquee-track-reverse { animation-play-state: paused; }
-
-/* ─── Terminal blink ────────────────────────────────────────────────────── */
+/* ─── Terminal cursor (used once, in the code sample only) ─────────────── */
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
 }
 .cursor-blink { animation: blink 1s step-end infinite; }
 
-/* ─── Feature card ──────────────────────────────────────────────────────── */
+/* ─── Feature card: flat, hairline, no shadow ───────────────────────────── */
 .feature-card {
   position: relative;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  border-radius: var(--radius);
+  transition: border-color 0.2s ease;
 }
 .feature-card:hover {
-  border-color: rgba(0,201,167,0.35);
-  box-shadow: var(--shadow-accent);
+  border-color: var(--accent);
 }
 
 /* ─── Comparison table highlight ───────────────────────────────────────── */
 .table-highlight {
-  background: rgba(0,201,167,0.06);
-  border-left: 3px solid var(--accent);
+  background: var(--accent-dim);
+  border-left: 2px solid var(--accent);
 }
 
-/* ─── Tab button ────────────────────────────────────────────────────────── */
+/* ─── Tab button: rectangular, underline-active, not pill ───────────────── */
 .tab-btn {
   font-family: var(--font-dm-sans), sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 500;
-  padding: 0.5rem 1.25rem;
-  border-radius: 99px;
-  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  border-radius: 0;
+  border: none;
+  border-bottom: 2px solid transparent;
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  transition: color 0.15s, border-color 0.15s;
 }
 .tab-btn:hover:not(.active) {
-  background: var(--bg);
   color: var(--text);
 }
 .tab-btn.active {
-  background: var(--accent);
-  color: #080C10;
-  border-color: var(--accent);
+  background: transparent;
+  color: var(--text);
+  border-bottom-color: var(--accent);
   font-weight: 600;
 }
 
@@ -182,13 +148,13 @@ body {
   bottom: 1.5rem;
   left: 50%;
   transform: translateX(-50%) translateY(8px);
-  background: var(--accent);
-  color: #080C10;
-  font-family: var(--font-dm-sans), sans-serif;
-  font-size: 0.85rem;
-  font-weight: 600;
-  padding: 0.6rem 1.4rem;
-  border-radius: 99px;
+  background: var(--text);
+  color: var(--bg);
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--radius);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s, transform 0.2s;
@@ -198,7 +164,7 @@ body {
 
 /* ─── Selection ─────────────────────────────────────────────────────────── */
 ::selection {
-  background: rgba(0,168,140,0.18);
+  background: var(--accent-dim);
   color: var(--text);
 }
 
@@ -206,7 +172,22 @@ body {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 2px;
+}
+
+/* ─── Marquee: slow, subtle, pausable ───────────────────────────────────── */
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee-left 60s linear infinite;
+}
+.marquee-wrapper:hover .marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none !important; }
 }
 
 /* ─── Code syntax ───────────────────────────────────────────────────────── */
@@ -215,10 +196,10 @@ body {
   font-size: 0.875rem;
   line-height: 1.7;
 }
-.tok-keyword  { color: #00C9A7; }
-.tok-decorator{ color: #FF6B35; }
-.tok-string   { color: #a8d8a8; }
-.tok-comment  { color: #8B949E; font-style: italic; }
-.tok-fn       { color: #d2a8ff; }
-.tok-param    { color: #79c0ff; }
-.tok-builtin  { color: #00C9A7; }
+.tok-keyword  { color: #0F9D74; }
+.tok-decorator{ color: #C4531E; }
+.tok-string   { color: #6B7F5E; }
+.tok-comment  { color: #8B8F86; font-style: italic; }
+.tok-fn       { color: #6B5EA8; }
+.tok-param    { color: #4C6E8C; }
+.tok-builtin  { color: #0F9D74; }

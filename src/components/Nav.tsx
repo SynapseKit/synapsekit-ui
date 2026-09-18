@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 export default function Nav() {
@@ -28,23 +29,22 @@ export default function Nav() {
         role="navigation"
         aria-label="Main navigation"
         style={{
-          background: scrolled ? "rgba(246,247,249,0.9)" : "transparent",
-          backdropFilter: scrolled ? "blur(16px)" : "none",
+          background: scrolled ? "var(--bg)" : "transparent",
           borderBottom: scrolled ? "1px solid var(--border)" : "1px solid transparent",
-          transition: "all 0.3s ease",
+          transition: "background 0.2s ease, border-color 0.2s ease",
         }}
         className="fixed top-0 left-0 right-0 z-50"
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           {/* Logo */}
-          <a
+          <Link
             href="/"
             style={{ fontFamily: "var(--font-syne)", color: "var(--text)", display: "flex", alignItems: "center", gap: "8px" }}
             className="text-xl font-bold tracking-tight"
           >
             <Image src="/logo.svg" alt="SynapseKit" width={26} height={26} priority />
             Synapse<span style={{ color: "var(--accent)" }}>Kit</span>
-          </a>
+          </Link>
 
           {/* Desktop links */}
           <div className="hidden items-center gap-8 md:flex">
@@ -104,10 +104,12 @@ export default function Nav() {
             <button
               onClick={copyInstall}
               style={{
-                background: "var(--accent)",
+                background: "var(--text)",
+                color: "var(--bg)",
                 fontFamily: "var(--font-jetbrains-mono)",
+                borderRadius: "var(--radius)",
               }}
-              className="cursor-pointer rounded-full px-4 py-2 text-sm text-white transition-opacity hover:opacity-90"
+              className="cursor-pointer px-4 py-2 text-sm transition-opacity hover:opacity-85"
             >
               pip install synapsekit
             </button>
@@ -159,10 +161,12 @@ export default function Nav() {
               <button
                 onClick={copyInstall}
                 style={{
-                  background: "var(--accent)",
+                  background: "var(--text)",
+                  color: "var(--bg)",
                   fontFamily: "var(--font-jetbrains-mono)",
+                  borderRadius: "var(--radius)",
                 }}
-                className="w-full cursor-pointer rounded-full px-4 py-2 text-sm text-white"
+                className="w-full cursor-pointer px-4 py-2 text-sm"
               >
                 pip install synapsekit
               </button>

@@ -2,140 +2,128 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/* ─── Neural mesh canvas ─────────────────────────────────────────────────── */
-interface MeshNode {
-  x: number; y: number;
-  vx: number; vy: number;
-  size: number;
-}
+/* ─── Router diagram: the actual mental model of the product ────────────────
+   Many providers → one interface (BaseLLM) → three capabilities.
+   Drawn once on load. No loop, no particles, no glow. ────────────────────── */
 
-function initNodes(w: number, h: number, count = 48): MeshNode[] {
-  return Array.from({ length: count }, () => ({
-    x: Math.random() * w,
-    y: Math.random() * h,
-    vx: (Math.random() - 0.5) * 0.4,
-    vy: (Math.random() - 0.5) * 0.4,
-    size: Math.random() * 1.8 + 0.8,
-  }));
-}
-
-function drawMesh(
-  ctx: CanvasRenderingContext2D,
-  nodes: MeshNode[],
-  w: number,
-  h: number,
-  mx: number,
-  my: number
-) {
-  /* trail fade */
-  ctx.fillStyle = "rgba(242,246,250,0.22)";
-  ctx.fillRect(0, 0, w, h);
-
-  const DIST = 150;
-  const MOUSE_RADIUS = 160;
-  const MOUSE_FORCE  = 0.022;
-
-  nodes.forEach(n => {
-    /* subtle mouse repulsion */
-    const dx = n.x - mx, dy = n.y - my;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist < MOUSE_RADIUS && dist > 0) {
-      n.vx += (dx / dist) * MOUSE_FORCE;
-      n.vy += (dy / dist) * MOUSE_FORCE;
-    }
-    /* speed cap */
-    const spd = Math.sqrt(n.vx * n.vx + n.vy * n.vy);
-    if (spd > 0.7) { n.vx *= 0.7 / spd; n.vy *= 0.7 / spd; }
-
-    n.x += n.vx; n.y += n.vy;
-    if (n.x < 0 || n.x > w) n.vx *= -1;
-    if (n.y < 0 || n.y > h) n.vy *= -1;
-  });
-
-  /* connections */
-  for (let i = 0; i < nodes.length; i++) {
-    for (let j = i + 1; j < nodes.length; j++) {
-      const a = nodes[i], b = nodes[j];
-      const dx = a.x - b.x, dy = a.y - b.y;
-      const d = Math.sqrt(dx * dx + dy * dy);
-      if (d < DIST) {
-        const alpha = (1 - d / DIST) * 0.35;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.strokeStyle = `rgba(0,168,140,${alpha * 0.7})`;
-        ctx.lineWidth = 0.8;
-        ctx.stroke();
-      }
-    }
-  }
-
-  /* nodes */
-  nodes.forEach(n => {
-    /* outer glow */
-    ctx.shadowBlur = 6;
-    ctx.shadowColor = "rgba(0,168,140,0.4)";
-    ctx.beginPath();
-    ctx.arc(n.x, n.y, n.size + 1.5, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(0,168,140,0.12)";
-    ctx.fill();
-    /* core */
-    ctx.shadowBlur = 0;
-    ctx.beginPath();
-    ctx.arc(n.x, n.y, n.size, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(0,168,140,0.6)";
-    ctx.fill();
-  });
-}
-
-/* ─── Typewriter cycling ─────────────────────────────────────────────────── */
-const PHRASES = [
-  "Without the bloat.",
-  "With 2 dependencies.",
-  "In pure Python.",
-  "Async by default.",
-  "Across 35 providers.",
+const INPUTS = [
+  { label: "OpenAI", y: 40 },
+  { label: "Anthropic", y: 96 },
+  { label: "Gemini", y: 152 },
+  { label: "Mistral", y: 208 },
+  { label: "Ollama", y: 264 },
+  { label: "+ 41 more", y: 320, muted: true },
 ];
 
-function useTypewriter(phrases: string[], speed = 55, pause = 2200, deleteSpeed = 28) {
-  const [text, setText] = useState("");
-  const [phraseIdx, setPhraseIdx] = useState(0);
-  const [typing, setTyping] = useState(true);
+const OUTPUTS = [
+  { label: "RAG", desc: "Retrieval", y: 64 },
+  { label: "Agents", desc: "ReAct, tools", y: 180 },
+  { label: "Graph", desc: "Workflows", y: 296 },
+];
 
-  useEffect(() => {
-    const target = phrases[phraseIdx];
-    let timer: ReturnType<typeof setTimeout>;
+const BUS_X = 430;
+const BUS_TOP = 40;
+const BUS_BOTTOM = 320;
+const IN_X = 180;
+const OUT_X = 620;
 
-    if (typing) {
-      if (text.length < target.length) {
-        timer = setTimeout(() => setText(target.slice(0, text.length + 1)), speed);
-      } else {
-        timer = setTimeout(() => setTyping(false), pause);
-      }
-    } else {
-      if (text.length > 0) {
-        timer = setTimeout(() => setText(t => t.slice(0, -1)), deleteSpeed);
-      } else {
-        setPhraseIdx(i => (i + 1) % phrases.length);
-        setTyping(true);
-      }
-    }
-    return () => clearTimeout(timer);
-  }, [text, typing, phraseIdx, phrases, speed, pause, deleteSpeed]);
+function RouterDiagram() {
+  return (
+    <svg
+      viewBox="0 0 900 360"
+      className="w-full"
+      style={{ maxWidth: 900 }}
+      role="img"
+      aria-label="Diagram: many LLM providers connect through SynapseKit's single BaseLLM interface, out to RAG, agent, and graph workflows"
+    >
+      {/* input lines */}
+      {INPUTS.map((n, i) => {
+        const len = BUS_X - IN_X;
+        return (
+          <line
+            key={n.label}
+            x1={IN_X} y1={n.y} x2={BUS_X} y2={n.y}
+            stroke={n.muted ? "var(--border)" : "var(--text-muted)"}
+            strokeWidth={1}
+            className="router-line"
+            style={{ ["--len" as string]: len, ["--delay" as string]: `${0.05 * i}s` }}
+          />
+        );
+      })}
 
-  return text;
+      {/* bus */}
+      <line
+        x1={BUS_X} y1={BUS_TOP} x2={BUS_X} y2={BUS_BOTTOM}
+        stroke="var(--accent)" strokeWidth={2}
+        className="router-line"
+        style={{ ["--len" as string]: BUS_BOTTOM - BUS_TOP, ["--delay" as string]: "0.3s" }}
+      />
+
+      {/* output lines */}
+      {OUTPUTS.map((n, i) => {
+        const dx = OUT_X - BUS_X, dy = n.y - 180;
+        const len = Math.hypot(dx, dy);
+        return (
+          <line
+            key={n.label}
+            x1={BUS_X} y1={180} x2={OUT_X} y2={n.y}
+            stroke="var(--text-muted)" strokeWidth={1}
+            className="router-line"
+            style={{ ["--len" as string]: len, ["--delay" as string]: `${0.4 + 0.08 * i}s` }}
+          />
+        );
+      })}
+
+      {/* input nodes + labels */}
+      {INPUTS.map((n, i) => (
+        <g key={n.label} className="router-node" style={{ ["--delay" as string]: `${0.5 + 0.04 * i}s` }}>
+          <circle cx={IN_X} cy={n.y} r={3} fill={n.muted ? "var(--border)" : "var(--text-muted)"} />
+          <text
+            x={IN_X - 12} y={n.y + 4} textAnchor="end"
+            fontFamily="var(--font-jetbrains-mono)" fontSize={12}
+            fill={n.muted ? "var(--text-muted)" : "var(--text)"}
+          >
+            {n.label}
+          </text>
+        </g>
+      ))}
+
+      {/* bus label */}
+      <g className="router-node" style={{ ["--delay" as string]: "0.75s" }}>
+        <rect x={BUS_X - 46} y={150} width={92} height={60} fill="var(--bg)" stroke="var(--accent)" strokeWidth={1.5} />
+        <text x={BUS_X} y={176} textAnchor="middle" fontFamily="var(--font-jetbrains-mono)" fontSize={12} fontWeight={700} fill="var(--text)">
+          BaseLLM
+        </text>
+        <text x={BUS_X} y={194} textAnchor="middle" fontFamily="var(--font-jetbrains-mono)" fontSize={9.5} fill="var(--text-muted)">
+          one interface
+        </text>
+      </g>
+
+      {/* output nodes + labels */}
+      {OUTPUTS.map((n, i) => (
+        <g key={n.label} className="router-node" style={{ ["--delay" as string]: `${0.85 + 0.06 * i}s` }}>
+          <circle cx={OUT_X} cy={n.y} r={3} fill="var(--accent)" />
+          <text x={OUT_X + 14} y={n.y - 1} fontFamily="var(--font-syne)" fontSize={14} fontWeight={700} fill="var(--text)">
+            {n.label}
+          </text>
+          <text x={OUT_X + 14} y={n.y + 15} fontFamily="var(--font-dm-sans)" fontSize={11} fill="var(--text-muted)">
+            {n.desc}
+          </text>
+        </g>
+      ))}
+    </svg>
+  );
 }
 
 /* ─── Stats ─────────────────────────────────────────────────────────────── */
-const STATS = [
-  { label: "LLM Providers",  value: 35 },
-  { label: "Loaders",        value: 53 },
-  { label: "Vector Stores",  value: 22 },
-  { label: "Tools",          value: 47, suffix: "+" },
-  { label: "Dependencies",   value: 2 },
+const STATS: { label: string; value: number; suffix?: string }[] = [
+  { label: "LLM providers", value: 46 },
+  { label: "vector stores", value: 32 },
+  { label: "data loaders", value: 83 },
+  { label: "hard dependencies", value: 2 },
 ];
 
-function animateCounter(el: HTMLElement, target: number, dur = 1600) {
+function animateCounter(el: HTMLElement, target: number, dur = 900) {
   const start = performance.now();
   const run = (now: number) => {
     const p = Math.min((now - start) / dur, 1);
@@ -149,303 +137,172 @@ function animateCounter(el: HTMLElement, target: number, dur = 1600) {
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
 export default function Hero() {
-  const canvasRef  = useRef<HTMLCanvasElement>(null);
-  const wrapRef    = useRef<HTMLDivElement>(null);
-  const rafRef     = useRef<number>(0);
-  const nodesRef   = useRef<MeshNode[]>([]);
-  const mouseRef   = useRef({ x: -9999, y: -9999 });
-  const statsRef   = useRef<HTMLDivElement>(null);
-  const counted    = useRef(false);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const counted = useRef(false);
+  const [reduced, setReduced] = useState(false);
 
-  const phrase = useTypewriter(PHRASES);
-
-  /* ── Canvas setup + loop ── */
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const wrap   = wrapRef.current;
-    if (!canvas || !wrap) return;
-
-    const ctx = canvas.getContext("2d")!;
-    const dpr = window.devicePixelRatio || 1;
-
-    function resize() {
-      const r = wrap!.getBoundingClientRect();
-      canvas!.width  = r.width  * dpr;
-      canvas!.height = r.height * dpr;
-      canvas!.style.width  = r.width  + "px";
-      canvas!.style.height = r.height + "px";
-      ctx.scale(dpr, dpr);
-      nodesRef.current = initNodes(r.width, r.height);
-    }
-    resize();
-    window.addEventListener("resize", resize);
-
-    function loop() {
-      const r = wrap!.getBoundingClientRect();
-      drawMesh(ctx, nodesRef.current, r.width, r.height, mouseRef.current.x, mouseRef.current.y);
-      rafRef.current = requestAnimationFrame(loop);
-    }
-    rafRef.current = requestAnimationFrame(loop);
-
-    return () => {
-      window.removeEventListener("resize", resize);
-      cancelAnimationFrame(rafRef.current);
-    };
+    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+    queueMicrotask(() => setReduced(mql.matches));
   }, []);
 
-  /* ── Mouse tracking ── */
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      const rect = wrapRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-    };
-    window.addEventListener("mousemove", handler);
-    return () => window.removeEventListener("mousemove", handler);
-  }, []);
-
-  /* ── Stat counters ── */
-  useEffect(() => {
-    const obs = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && !counted.current) {
-        counted.current = true;
-        statsRef.current?.querySelectorAll<HTMLElement>("[data-count]").forEach(el => {
-          animateCounter(el, Number(el.dataset.count));
-        });
-      }
-    }, { threshold: 0.3 });
+    if (reduced) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !counted.current) {
+          counted.current = true;
+          statsRef.current?.querySelectorAll<HTMLElement>("[data-count]").forEach((el) => {
+            animateCounter(el, Number(el.dataset.count));
+          });
+        }
+      },
+      { threshold: 0.4 }
+    );
     if (statsRef.current) obs.observe(statsRef.current);
     return () => obs.disconnect();
-  }, []);
+  }, [reduced]);
 
   return (
     <section
-      ref={wrapRef}
-      style={{ background: "#F2F6FA", minHeight: "100vh", position: "relative", overflow: "hidden" }}
-      className="flex flex-col items-center justify-center px-6 pt-24 pb-16"
+      style={{ background: "var(--bg)", position: "relative" }}
+      className="flex flex-col items-center px-6 pt-32 pb-20"
     >
-      {/* Canvas neural mesh */}
-      <canvas
-        ref={canvasRef}
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}
+      {/* faint grid, structural not decorative: reads as blueprint graph paper */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          pointerEvents: "none",
+          backgroundImage:
+            "linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px)",
+          backgroundSize: "56px 56px",
+          maskImage: "linear-gradient(to bottom, black, transparent 85%)",
+          WebkitMaskImage: "linear-gradient(to bottom, black, transparent 85%)",
+        }}
       />
 
-      {/* Radial centre glow */}
-      <div style={{
-        position: "absolute", inset: 0, pointerEvents: "none",
-        background: "radial-gradient(ellipse 60% 50% at 50% 45%, rgba(0,168,140,0.06) 0%, transparent 70%)",
-      }} />
-
-      {/* Scan-line overlay */}
-      <div style={{
-        position: "absolute", inset: 0, pointerEvents: "none",
-        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.015) 2px, rgba(0,0,0,0.015) 4px)",
-        zIndex: 1,
-      }} />
-
-      {/* Content */}
-      <div style={{ position: "relative", zIndex: 2 }} className="mx-auto max-w-5xl text-center">
-
-        {/* Badge — links to the changelog */}
+      <div className="mx-auto w-full max-w-3xl text-center" style={{ position: "relative" }}>
+        {/* Badge */}
         <a
           href="https://synapsekit.github.io/synapsekit-docs/docs/changelog"
           style={{
-            display: "inline-flex", alignItems: "center", gap: "8px",
-            background: "rgba(0,168,140,0.08)",
-            border: "1px solid rgba(0,168,140,0.25)",
-            color: "var(--accent)",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
+            border: "1px solid var(--border)",
+            color: "var(--text-muted)",
             fontFamily: "var(--font-jetbrains-mono)",
-            borderRadius: "99px", padding: "6px 16px",
-            fontSize: "11px", fontWeight: 500, letterSpacing: "0.05em",
-            marginBottom: "2.5rem", textDecoration: "none",
+            padding: "5px 14px",
+            fontSize: "11.5px",
+            marginBottom: "2rem",
+            textDecoration: "none",
           }}
         >
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent)", animation: "blink 1.4s step-end infinite" }} />
-          New in v2.0.1 · SynapseKit Live · Docker · Digital Twin · Time-Travel →
+          <span style={{ color: "var(--accent)" }}>v2.x</span>
+          Guardrails, orchestration eval, embeddings layer
         </a>
 
-        {/* Headline with glitch */}
-        <div style={{ position: "relative", marginBottom: "1.75rem" }}>
-          <h1
-            style={{
-              fontFamily: "var(--font-syne), sans-serif",
-              fontWeight: 800,
-              fontSize: "clamp(3rem, 8vw, 6.5rem)",
-              lineHeight: 1.0,
-              color: "var(--text)",
-              letterSpacing: "-0.02em",
-              position: "relative",
-            }}
-          >
-            Build LLM Apps.
-          </h1>
-
-          {/* Glitch layer 1 (orange offset) */}
-          <h1 aria-hidden style={{
+        <h1
+          style={{
             fontFamily: "var(--font-syne), sans-serif",
             fontWeight: 800,
-            fontSize: "clamp(3rem, 8vw, 6.5rem)",
-            lineHeight: 1.0,
+            fontSize: "clamp(2.6rem, 6.4vw, 4.6rem)",
+            lineHeight: 1.04,
+            color: "var(--text)",
             letterSpacing: "-0.02em",
-            color: "rgba(255,107,53,0.5)",
-            position: "absolute", inset: 0,
-            animation: "glitch-clip1 7s infinite",
-            userSelect: "none",
-          }}>
-            Build LLM Apps.
-          </h1>
+          }}
+        >
+          One interface.
+          <br />
+          Every LLM backend.
+        </h1>
 
-          {/* Glitch layer 2 (teal offset) */}
-          <h1 aria-hidden style={{
-            fontFamily: "var(--font-syne), sans-serif",
-            fontWeight: 800,
-            fontSize: "clamp(3rem, 8vw, 6.5rem)",
-            lineHeight: 1.0,
-            letterSpacing: "-0.02em",
-            color: "rgba(0,212,176,0.5)",
-            position: "absolute", inset: 0,
-            animation: "glitch-clip2 7s infinite",
-            animationDelay: "0.05s",
-            userSelect: "none",
-          }}>
-            Build LLM Apps.
-          </h1>
-
-          {/* Shimmer accent line */}
-          <div style={{ marginTop: "0.2rem" }}>
-            <span
-              className="accent-gradient"
-              style={{
-                fontFamily: "var(--font-syne), sans-serif",
-                fontWeight: 800,
-                fontSize: "clamp(3rem, 8vw, 6.5rem)",
-                lineHeight: 1.0,
-                letterSpacing: "-0.02em",
-                display: "inline-block",
-              }}
-            >
-              {phrase}
-              <span style={{
-                display: "inline-block",
-                width: "3px", height: "0.85em",
-                background: "var(--accent)",
-                verticalAlign: "text-bottom",
-                marginLeft: "4px",
-                animation: "typewriter-blink 0.8s step-end infinite",
-              }} />
-            </span>
-          </div>
-        </div>
-
-        {/* Subline */}
-        <p style={{
-          color: "var(--text-muted)", fontSize: "clamp(1rem, 2vw, 1.2rem)",
-          lineHeight: 1.7, maxWidth: "640px", margin: "0 auto 2.5rem",
-        }}>
-          Async-native RAG, Agents, and Graph Workflows.{" "}
-          <strong style={{ color: "var(--text)" }}>2 hard dependencies</strong> · {" "}
-          <strong style={{ color: "var(--text)" }}>35 providers</strong> · {" "}
-          No SaaS. No lock-in. No magic.
+        <p
+          style={{
+            color: "var(--text-muted)",
+            fontSize: "1.15rem",
+            lineHeight: 1.7,
+            maxWidth: "560px",
+            margin: "1.5rem auto 2.25rem",
+          }}
+        >
+          SynapseKit is an async-first Python framework for RAG, agents, and graph
+          workflows. Two hard dependencies. Plain Python you can read end to end.
         </p>
 
-        {/* CTAs */}
         <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
           <a
             href="#install"
             style={{
-              background: "var(--accent)",
-              color: "#080C10",
-              fontWeight: 700,
-              padding: "14px 32px",
-              borderRadius: "99px",
-              fontSize: "0.95rem",
+              background: "var(--text)",
+              color: "var(--bg)",
+              fontWeight: 600,
+              padding: "12px 24px",
+              borderRadius: "var(--radius)",
+              fontSize: "0.9rem",
               textDecoration: "none",
-              boxShadow: "0 0 32px rgba(0,168,140,0.35)",
-              transition: "box-shadow 0.3s, transform 0.2s",
-            }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLElement).style.boxShadow = "0 0 48px rgba(0,168,140,0.55)";
-              (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLElement).style.boxShadow = "0 0 32px rgba(0,168,140,0.35)";
-              (e.currentTarget as HTMLElement).style.transform = "none";
             }}
           >
-            Get Started →
+            pip install synapsekit
           </a>
           <a
             href="https://github.com/SynapseKit/SynapseKit"
-            target="_blank" rel="noopener noreferrer"
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               border: "1px solid var(--border)",
-              color: "var(--text-muted)",
-              padding: "14px 32px",
-              borderRadius: "99px",
-              fontSize: "0.95rem",
+              color: "var(--text)",
+              padding: "12px 24px",
+              borderRadius: "var(--radius)",
+              fontSize: "0.9rem",
               textDecoration: "none",
-              transition: "border-color 0.3s, color 0.3s",
-            }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLElement).style.borderColor = "var(--accent)";
-              (e.currentTarget as HTMLElement).style.color = "var(--accent)";
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
-              (e.currentTarget as HTMLElement).style.color = "var(--text-muted)";
             }}
           >
-            View on GitHub
+            View source
           </a>
         </div>
       </div>
 
-      {/* Stats bar */}
-      <div ref={statsRef} style={{ position: "relative", zIndex: 2, width: "100%", maxWidth: "860px", marginTop: "5rem" }}>
-        <div style={{
-          background: "var(--surface)",
-          border: "1px solid var(--border)",
-          borderRadius: "16px",
-          display: "grid",
-          gridTemplateColumns: "repeat(5, 1fr)",
-          boxShadow: "0 0 0 1px rgba(0,168,140,0.08), var(--shadow-lg)",
-        }}>
-          {STATS.map((s, i) => (
-            <div
-              key={s.label}
-              style={{
-                padding: "1.5rem 1rem",
-                textAlign: "center",
-                borderRight: i < STATS.length - 1 ? "1px solid var(--border)" : "none",
-              }}
-            >
-              <div style={{
-                fontFamily: "var(--font-syne), sans-serif",
-                color: "var(--accent)",
-                fontSize: "clamp(1.6rem, 3vw, 2.2rem)",
-                fontWeight: 800,
-              }}>
-                <span data-count={s.value}>0</span>{s.suffix ?? ""}
-              </div>
-              <div style={{ color: "var(--text-muted)", fontSize: "0.75rem", fontWeight: 500, marginTop: "4px" }}>
-                {s.label}
-              </div>
-            </div>
-          ))}
-        </div>
+      {/* The one bold move: the router diagram */}
+      <div className="mt-16 w-full" style={{ position: "relative", maxWidth: 900 }}>
+        <RouterDiagram />
       </div>
 
-      {/* Scroll hint */}
-      <div style={{
-        position: "absolute", bottom: "2rem", left: "50%",
-        transform: "translateX(-50%)",
-        display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
-        zIndex: 2, animation: "hero-float 2.5s ease-in-out infinite",
-      }}>
-        <div style={{ width: 1, height: 40, background: "linear-gradient(to bottom, var(--accent), transparent)" }} />
-        <span style={{ color: "var(--text-muted)", fontSize: "10px", fontFamily: "var(--font-jetbrains-mono)", letterSpacing: "0.1em" }}>
-          SCROLL
-        </span>
+      {/* Stats: quiet, inline, no cards */}
+      <div
+        ref={statsRef}
+        style={{
+          position: "relative",
+          display: "flex",
+          gap: "2.5rem",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          marginTop: "2rem",
+          paddingTop: "1.75rem",
+          borderTop: "1px solid var(--border)",
+          width: "100%",
+          maxWidth: 720,
+        }}
+      >
+        {STATS.map((s) => (
+          <div key={s.label} style={{ textAlign: "center" }}>
+            <div
+              style={{
+                fontFamily: "var(--font-jetbrains-mono)",
+                color: "var(--text)",
+                fontSize: "1.4rem",
+                fontWeight: 600,
+              }}
+            >
+              <span data-count={s.value}>{reduced ? s.value : 0}</span>
+              {s.suffix ?? ""}
+            </div>
+            <div style={{ color: "var(--text-muted)", fontSize: "0.78rem", marginTop: "2px" }}>
+              {s.label}
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );

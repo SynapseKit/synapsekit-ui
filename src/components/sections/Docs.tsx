@@ -5,60 +5,60 @@ import { useReveal } from "@/hooks/useReveal";
 const DOCS = [
   {
     label: "Quickstart",
-    tagline: "Up in 3 minutes",
+    tagline: "Up in 5 minutes",
     description: "Build your first RAG pipeline or agent. pip install, configure a provider, ship.",
     href: "https://synapsekit.github.io/synapsekit-docs/docs/getting-started/quickstart",
     code: `from synapsekit import RAGPipeline\n\npipeline = RAGPipeline(llm=llm, store=store)\nresult = await pipeline.query("How does X work?")`,
-    accent: "var(--accent)",
     featured: true,
   },
   {
     label: "SynapseKit Live",
-    tagline: "New in v2.0.1 · glass-box dashboard",
-    description: "Watch every LLM call, tool, retrieval, memory write, and cost stream to your browser in real time — zero extra dependencies.",
+    tagline: "Glass-box dashboard",
+    description: "Watch every LLM call, tool, retrieval, memory write, and cost stream to your browser in real time. Zero extra dependencies.",
     href: "https://synapsekit.github.io/synapsekit-docs/docs/observability/live",
     code: `import synapsekit.live as live\n\nlive.enable()            # dashboard opens\nawait agent.arun("...")  # streams live`,
-    accent: "var(--accent)",
   },
   {
     label: "RAG Guide",
-    tagline: "Retrieval-Augmented Generation",
+    tagline: "Retrieval-augmented generation",
     description: "Pipelines, loaders, hybrid retrieval, vector stores, evaluation.",
     href: "https://synapsekit.github.io/synapsekit-docs/docs/rag/pipeline",
     code: `loader = PDFLoader("paper.pdf")\ndocs  = await loader.load()\nawait store.add(docs)`,
-    accent: "var(--accent)",
   },
   {
     label: "Agents",
-    tagline: "ReAct · tools · memory",
+    tagline: "ReAct, tools, memory",
     description: "Function calling, tool use, episodic memory, and AgentFederation across services.",
     href: "https://synapsekit.github.io/synapsekit-docs/docs/agents/overview",
     code: `agent = Agent(llm=llm, tools=[search, sql])\nresult = await agent.run(task)`,
-    accent: "var(--accent)",
   },
   {
     label: "Graph Workflows",
-    tagline: "DAG · parallel · conditional",
+    tagline: "DAG, parallel, conditional",
     description: "Compose pipelines as graphs. Branch, merge, loop, and run subgraphs in parallel.",
     href: "https://synapsekit.github.io/synapsekit-docs/docs/graph/overview",
     code: `graph = Graph()\ngraph.add_edge(fetch, summarize)\ngraph.add_edge(fetch, classify)`,
-    accent: "var(--accent)",
   },
   {
     label: "LLM Providers",
-    tagline: "35 providers · one interface",
+    tagline: "46 providers, one interface",
     description: "ReasoningLLM, CostQualityRouter, streaming, structured output across all providers.",
     href: "https://synapsekit.github.io/synapsekit-docs/docs/llms/overview",
-    code: `llm = LLM(model="gpt-4o")       # OpenAI\nllm = LLM(model="claude-3-5-sonnet") # Anthropic\nllm = LLM(model="gemini-pro")   # Google`,
-    accent: "var(--accent)",
+    code: `llm = LLM(model="gpt-4o")            # OpenAI\nllm = LLM(model="claude-sonnet-5")   # Anthropic\nllm = LLM(model="gemini-pro")        # Google`,
+  },
+  {
+    label: "EvalCI",
+    tagline: "Quality gates on every PR",
+    description: "LLM eval suites that run as a GitHub Action, so regressions get caught before merge, not in production.",
+    href: "https://synapsekit.github.io/synapsekit-docs/docs/evalci/overview",
+    code: `@eval_case\ndef test_summary_quality():\n    assert score >= 0.85`,
   },
   {
     label: "API Reference",
-    tagline: "Every class · every method",
+    tagline: "Every class, every method",
     description: "Full reference for every public symbol, parameter, return type, and exception.",
     href: "https://synapsekit.github.io/synapsekit-docs/docs/api/llm",
     code: `# Auto-generated from source\n# Searchable, versioned, always current`,
-    accent: "var(--accent)",
   },
 ];
 
@@ -71,10 +71,6 @@ export default function Docs() {
 
         {/* Header */}
         <div ref={ref} className="reveal mb-14">
-          <p style={{ color: "var(--accent)", fontFamily: "var(--font-jetbrains-mono)" }}
-            className="mb-3 text-xs font-medium tracking-widest uppercase">
-            Documentation
-          </p>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
             <h2 style={{ fontFamily: "var(--font-syne)", color: "var(--text)", lineHeight: 1.1 }}
               className="text-3xl font-extrabold md:text-5xl">
@@ -87,15 +83,17 @@ export default function Docs() {
               rel="noopener noreferrer"
               style={{
                 display: "inline-flex", alignItems: "center", gap: "8px",
-                padding: "0.65rem 1.4rem", borderRadius: "99px",
-                background: "var(--accent)", color: "#fff",
-                fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "0.875rem",
-                textDecoration: "none", transition: "opacity 0.2s", whiteSpace: "nowrap",
+                padding: "0.65rem 1.4rem", borderRadius: "var(--radius)",
+                border: "1px solid var(--border)",
+                color: "var(--text)",
+                fontFamily: "var(--font-dm-sans)", fontWeight: 600, fontSize: "0.875rem",
+                textDecoration: "none", whiteSpace: "nowrap",
+                transition: "border-color 0.2s",
               }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = "0.88"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--accent)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--border)"; }}
             >
-              All docs →
+              All docs
             </a>
           </div>
         </div>
@@ -109,43 +107,28 @@ export default function Docs() {
               href={d.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="reveal stagger-1"
+              className="reveal stagger-1 feature-card"
               style={{
                 display: "grid",
                 gridTemplateColumns: "1fr 1fr",
                 gap: "0",
-                borderRadius: "20px",
-                border: "1px solid var(--border)",
                 background: "var(--surface)",
                 textDecoration: "none",
                 overflow: "hidden",
-                marginBottom: "16px",
-                transition: "border-color 0.2s, box-shadow 0.2s",
-              }}
-              onMouseEnter={e => {
-                const el = e.currentTarget;
-                el.style.borderColor = `${d.accent}55`;
-                el.style.boxShadow = `0 8px 40px ${d.accent}18`;
-              }}
-              onMouseLeave={e => {
-                const el = e.currentTarget;
-                el.style.borderColor = "";
-                el.style.boxShadow = "";
+                marginBottom: "1px",
               }}
             >
               {/* Left */}
               <div style={{ padding: "2.5rem", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                 <div>
-                  <span style={{
-                    display: "inline-block",
+                  <p style={{
                     fontFamily: "var(--font-jetbrains-mono)",
-                    fontSize: "10px", fontWeight: 700,
-                    letterSpacing: "0.1em", textTransform: "uppercase",
-                    color: d.accent, background: `${d.accent}18`,
-                    padding: "3px 10px", borderRadius: "6px", marginBottom: "1.1rem",
+                    fontSize: "0.75rem", fontWeight: 600,
+                    color: "var(--accent)",
+                    marginBottom: "1rem",
                   }}>
                     {d.tagline}
-                  </span>
+                  </p>
                   <h3 style={{ fontFamily: "var(--font-syne)", fontSize: "1.75rem", fontWeight: 800, color: "var(--text)", lineHeight: 1.2, marginBottom: "0.75rem" }}>
                     {d.label}
                   </h3>
@@ -153,20 +136,18 @@ export default function Docs() {
                     {d.description}
                   </p>
                 </div>
-                <span style={{ color: d.accent, fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "0.875rem" }}>
-                  Read the guide →
+                <span style={{ color: "var(--text)", fontFamily: "var(--font-dm-sans)", fontWeight: 600, fontSize: "0.875rem" }}>
+                  Read the guide
                 </span>
               </div>
               {/* Right — code */}
               <div style={{
-                background: "#0D1824",
+                background: "var(--dark-bg)",
                 padding: "2.5rem",
                 display: "flex", alignItems: "center",
-                borderLeft: `3px solid ${d.accent}40`,
+                borderLeft: "1px solid var(--dark-border)",
               }}>
-                <pre style={{
-                  fontFamily: "var(--font-jetbrains-mono)",
-                  fontSize: "0.82rem", lineHeight: 2,
+                <pre className="code-block" style={{
                   color: "#cdd9e5", margin: 0, whiteSpace: "pre-wrap",
                 }}>
                   {d.code.split("\n").map((line, i) => {
@@ -176,7 +157,7 @@ export default function Docs() {
                       <div key={i}>
                         {parts.map((part, j) =>
                           kws.includes(part)
-                            ? <span key={j} style={{ color: d.accent }}>{part}</span>
+                            ? <span key={j} className="tok-keyword">{part}</span>
                             : <span key={j}>{part}</span>
                         )}
                       </div>
@@ -188,8 +169,16 @@ export default function Docs() {
           );
         })()}
 
-        {/* 5-card grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px" }}>
+        {/* Card grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: "1px",
+            background: "var(--border)",
+            border: "1px solid var(--border)",
+          }}
+        >
           {DOCS.slice(1).map((d, i) => (
             <a
               key={d.label}
@@ -200,33 +189,15 @@ export default function Docs() {
               className={`reveal stagger-${i + 2}`}
               style={{
                 display: "flex", flexDirection: "column",
-                borderRadius: "16px",
-                border: "1px solid var(--border)",
                 background: "var(--surface)",
                 textDecoration: "none",
-                overflow: "hidden",
-                transition: "border-color 0.2s, box-shadow 0.2s, transform 0.2s",
-              }}
-              onMouseEnter={e => {
-                const el = e.currentTarget;
-                el.style.borderColor = `${d.accent}55`;
-                el.style.boxShadow = `0 6px 28px ${d.accent}18`;
-                el.style.transform = "translateY(-3px)";
-              }}
-              onMouseLeave={e => {
-                const el = e.currentTarget;
-                el.style.borderColor = "";
-                el.style.boxShadow = "";
-                el.style.transform = "";
               }}
             >
               {/* Code preview */}
-              <div style={{
-                background: "#0D1824",
+              <div className="code-block" style={{
+                background: "var(--dark-bg)",
                 padding: "1rem",
-                fontFamily: "var(--font-jetbrains-mono)",
                 fontSize: "0.68rem",
-                lineHeight: 1.8,
                 color: "rgba(205,217,229,0.7)",
                 flexShrink: 0,
               }}>
@@ -239,9 +210,8 @@ export default function Docs() {
               <div style={{ padding: "1.1rem 1.1rem 1.25rem", flex: 1, display: "flex", flexDirection: "column" }}>
                 <span style={{
                   fontFamily: "var(--font-jetbrains-mono)",
-                  fontSize: "9px", fontWeight: 700,
-                  letterSpacing: "0.1em", textTransform: "uppercase",
-                  color: d.accent, marginBottom: "0.4rem", display: "block",
+                  fontSize: "0.7rem", fontWeight: 600,
+                  color: "var(--accent)", marginBottom: "0.4rem", display: "block",
                 }}>
                   {d.tagline}
                 </span>
@@ -251,8 +221,8 @@ export default function Docs() {
                 <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", lineHeight: 1.6, flex: 1 }}>
                   {d.description}
                 </p>
-                <span style={{ color: d.accent, fontSize: "0.78rem", fontWeight: 700, marginTop: "0.85rem", display: "block" }}>
-                  Read →
+                <span style={{ color: "var(--text)", fontSize: "0.78rem", fontWeight: 600, marginTop: "0.85rem", display: "block" }}>
+                  Read
                 </span>
               </div>
             </a>

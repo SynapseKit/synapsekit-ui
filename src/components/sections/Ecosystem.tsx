@@ -38,15 +38,15 @@ const PROVIDERS = [
   { name: "Databricks",    domain: "databricks.com" },
 ];
 
-const ROW1 = [...PROVIDERS.slice(0, 17), ...PROVIDERS.slice(0, 17)] as typeof PROVIDERS;
-const ROW2 = [...PROVIDERS.slice(17), ...PROVIDERS.slice(17)] as typeof PROVIDERS;
+// duplicated once so the marquee loop seam is invisible
+const MARQUEE_ROW = [...PROVIDERS, ...PROVIDERS];
 
 const CATEGORIES = [
   {
     label: "Data Loaders",
-    count: "53",
+    count: "83",
     headline: "Load from anywhere. Get Documents everywhere.",
-    description: "Every loader returns the same Document object — whether it's a PDF, a YouTube video, a Salesforce export, or a BigQuery table. Your pipeline never needs to change.",
+    description: "Every loader returns the same Document object, whether it's a PDF, a YouTube video, a Salesforce export, or a BigQuery table. Your pipeline never needs to change.",
     code: "docs = await PDFLoader('report.pdf').load()",
     items: [
       { name: "PDF", domain: "adobe.com" },
@@ -61,9 +61,9 @@ const CATEGORIES = [
   },
   {
     label: "Vector Stores",
-    count: "22",
+    count: "32",
     headline: "Start local. Go prod. Zero rewrites.",
-    description: "Chroma for your laptop, Pinecone for production, pgvector for your existing Postgres — all behind one interface. Change one line, not your entire codebase.",
+    description: "Chroma for your laptop, Pinecone for production, pgvector for your existing Postgres, all behind one interface. Change one line, not your entire codebase.",
     code: "store = ChromaVectorStore()  # swap to Pinecone later",
     items: [
       { name: "Chroma", domain: "trychroma.com" },
@@ -78,9 +78,9 @@ const CATEGORIES = [
   },
   {
     label: "Agent Tools",
-    count: "47+",
+    count: "56",
     headline: "One decorator. Real-world actions.",
-    description: "Decorate any function with @tool and your agent can call it. Browser automation, SQL queries, GitHub PRs, Slack messages — all wired up and production-tested.",
+    description: "Decorate any function with @tool and your agent can call it. Browser automation, SQL queries, GitHub PRs, Slack messages: all wired up and production-tested.",
     code: "@tool\nasync def query_db(sql: str) -> str: ...",
     items: [
       { name: "GitHub", domain: "github.com" },
@@ -95,9 +95,9 @@ const CATEGORIES = [
   },
   {
     label: "Memory Backends",
-    count: "4",
+    count: "10",
     headline: "Agents that remember across sessions.",
-    description: "Episodic memory stores what happened. Semantic memory stores what matters. Both work across SQLite, Redis, and Postgres — start in-memory, scale to Redis in one line.",
+    description: "Episodic memory stores what happened. Semantic memory stores what matters. Both work across SQLite, Redis, Postgres, and Firestore: start in-memory, scale out in one line.",
     code: "agent = Agent(memory=RedisMemory(url=REDIS_URL))",
     items: [
       { name: "SQLite", domain: "sqlite.org" },
@@ -108,51 +108,33 @@ const CATEGORIES = [
   },
 ];
 
-function ProviderChip({ name, domain, dim = false }: { name: string; domain: string; dim?: boolean }) {
+function ProviderChip({ name, domain }: { name: string; domain: string }) {
   return (
     <span
       style={{
         display: "inline-flex",
         alignItems: "center",
         gap: "10px",
-        padding: "10px 18px",
-        borderRadius: "14px",
+        padding: "9px 16px",
+        borderRadius: "var(--radius)",
         border: "1px solid var(--border)",
-        background: dim ? "var(--bg)" : "var(--surface)",
-        boxShadow: "0 2px 8px rgba(13,24,36,0.06)",
+        background: "var(--surface)",
         fontFamily: "var(--font-dm-sans)",
         fontSize: "0.875rem",
         fontWeight: 500,
         color: "var(--text)",
         whiteSpace: "nowrap",
-        transition: "border-color 0.2s, box-shadow 0.2s",
         flexShrink: 0,
       }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <span
-        style={{
-          width: "28px",
-          height: "28px",
-          borderRadius: "8px",
-          background: "var(--surface)",
-          border: "1px solid var(--border)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexShrink: 0,
-          overflow: "hidden",
-        }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
-          alt=""
-          width={20}
-          height={20}
-          style={{ display: "block" }}
-        />
-      </span>
+      <img
+        src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
+        alt=""
+        width={16}
+        height={16}
+        style={{ display: "block", flexShrink: 0 }}
+      />
       {name}
     </span>
   );
@@ -162,32 +144,22 @@ export default function Ecosystem() {
   const { ref } = useReveal();
 
   return (
-    <section
-      style={{ background: "var(--surface)" }}
-      className="py-24"
-    >
+    <section style={{ background: "var(--surface)" }} className="py-24">
       <div className="mx-auto max-w-6xl px-6">
         <div ref={ref} className="reveal mb-14 text-center">
-          <p
-            style={{ color: "var(--accent)", fontFamily: "var(--font-jetbrains-mono)" }}
-            className="mb-3 text-xs font-medium tracking-widest uppercase"
-          >
-            Ecosystem
-          </p>
           <h2
             style={{ fontFamily: "var(--font-syne)", color: "var(--text)" }}
             className="text-3xl font-extrabold md:text-5xl"
           >
-            Your entire stack,{" "}
-            <span style={{ color: "var(--accent)" }}>already supported.</span>
+            Your entire stack, <span style={{ color: "var(--accent)" }}>already supported.</span>
           </h2>
           <p style={{ color: "var(--text-muted)", marginTop: "1rem", fontSize: "1rem" }}>
-            35 LLM providers behind one unified API. Swap without rewriting a line.
+            46 LLM providers behind one unified API. Swap without rewriting a line.
           </p>
         </div>
       </div>
 
-      {/* Two-row marquee */}
+      {/* Single-row marquee. Slow, pausable on hover, no glow. */}
       <div
         style={{
           position: "relative",
@@ -195,7 +167,6 @@ export default function Ecosystem() {
           overflow: "hidden",
         }}
       >
-        {/* Left fade */}
         <div style={{
           position: "absolute",
           left: 0,
@@ -206,7 +177,6 @@ export default function Ecosystem() {
           zIndex: 2,
           pointerEvents: "none",
         }} />
-        {/* Right fade */}
         <div style={{
           position: "absolute",
           right: 0,
@@ -218,32 +188,13 @@ export default function Ecosystem() {
           pointerEvents: "none",
         }} />
 
-        {/* Row 1 — left to right */}
-        <div
-          style={{ overflow: "hidden", marginBottom: "12px" }}
-          className="marquee-wrapper"
-        >
+        <div style={{ overflow: "hidden" }} className="marquee-wrapper">
           <div
             className="marquee-track"
-            style={{ display: "flex", gap: "12px", width: "max-content" }}
+            style={{ display: "flex", gap: "10px", width: "max-content" }}
           >
-            {ROW1.map((p, i) => (
+            {MARQUEE_ROW.map((p, i) => (
               <ProviderChip key={i} name={p.name} domain={p.domain} />
-            ))}
-          </div>
-        </div>
-
-        {/* Row 2 — right to left (reversed) */}
-        <div
-          style={{ overflow: "hidden" }}
-          className="marquee-wrapper"
-        >
-          <div
-            className="marquee-track-reverse"
-            style={{ display: "flex", gap: "12px", width: "max-content" }}
-          >
-            {ROW2.map((p, i) => (
-              <ProviderChip key={i} name={p.name} domain={p.domain} dim />
             ))}
           </div>
         </div>
@@ -251,55 +202,39 @@ export default function Ecosystem() {
 
       {/* Category rows */}
       <div className="mx-auto max-w-6xl px-6">
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1px", background: "var(--border)", border: "1px solid var(--border)" }}>
           {CATEGORIES.map((cat, i) => (
             <div
               key={cat.label}
               ref={ref}
-              className={`reveal stagger-${i + 1}`}
+              className={`reveal stagger-${i + 1} feature-card`}
               style={{
                 background: "var(--bg)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius-lg)",
+                border: "none",
+                borderRadius: 0,
                 padding: "2rem 2.25rem",
                 display: "grid",
                 gridTemplateColumns: "1fr 1fr",
                 gap: "2.5rem",
                 alignItems: "center",
-                transition: "border-color 0.2s, box-shadow 0.2s",
-              }}
-              onMouseEnter={e => {
-                const el = e.currentTarget;
-                el.style.borderColor = "rgba(0,168,140,0.25)";
-                el.style.boxShadow = "0 4px 32px rgba(0,168,140,0.07)";
-              }}
-              onMouseLeave={e => {
-                const el = e.currentTarget;
-                el.style.borderColor = "";
-                el.style.boxShadow = "";
               }}
             >
               {/* Left: text */}
               <div>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "0.75rem" }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "10px", marginBottom: "0.75rem" }}>
                   <span style={{
                     fontFamily: "var(--font-jetbrains-mono)",
-                    fontSize: "10px",
+                    fontSize: "0.75rem",
                     fontWeight: 600,
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    color: "var(--accent)",
-                    background: "var(--accent-dim)",
-                    padding: "3px 10px",
-                    borderRadius: "6px",
+                    color: "var(--text-muted)",
                   }}>
                     {cat.label}
                   </span>
                   <span style={{
-                    fontFamily: "var(--font-syne)",
-                    fontSize: "0.85rem",
-                    fontWeight: 800,
-                    color: "var(--text-muted)",
+                    fontFamily: "var(--font-jetbrains-mono)",
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    color: "var(--accent)",
                   }}>
                     {cat.count}
                   </span>
@@ -326,16 +261,17 @@ export default function Ecosystem() {
                 </p>
 
                 {/* Code snippet */}
-                <div style={{
-                  background: "#0D1824",
-                  borderRadius: "8px",
-                  padding: "0.6rem 0.9rem",
-                  fontFamily: "var(--font-jetbrains-mono)",
-                  fontSize: "0.75rem",
-                  color: "#00A88C",
-                  lineHeight: 1.6,
-                  whiteSpace: "pre",
-                }}>
+                <div
+                  className="code-block"
+                  style={{
+                    background: "var(--dark-bg)",
+                    borderRadius: "var(--radius)",
+                    padding: "0.6rem 0.9rem",
+                    fontSize: "0.75rem",
+                    color: "#8FD9BC",
+                    whiteSpace: "pre",
+                  }}
+                >
                   {cat.code}
                 </div>
               </div>
@@ -344,7 +280,9 @@ export default function Ecosystem() {
               <div style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(4, 1fr)",
-                gap: "10px",
+                gap: "1px",
+                background: "var(--border)",
+                border: "1px solid var(--border)",
               }}>
                 {cat.items.map(item => (
                   <div
@@ -356,18 +294,16 @@ export default function Ecosystem() {
                       alignItems: "center",
                       gap: "6px",
                       padding: "12px 8px",
-                      borderRadius: "12px",
                       background: "var(--surface)",
-                      border: "1px solid var(--border)",
                     }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={`https://www.google.com/s2/favicons?domain=${item.domain}&sz=64`}
                       alt={item.name}
-                      width={28}
-                      height={28}
-                      style={{ borderRadius: "6px", display: "block" }}
+                      width={22}
+                      height={22}
+                      style={{ display: "block" }}
                     />
                     <span style={{
                       fontSize: "10px",

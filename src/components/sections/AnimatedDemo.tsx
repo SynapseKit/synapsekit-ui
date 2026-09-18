@@ -32,6 +32,7 @@ interface ScenarioDef {
   edges: EdgeDef[];
   steps: StepDef[];
   totalDuration: number;
+  code: string;
 }
 
 const NW = 48; // card half-width
@@ -66,7 +67,7 @@ const ICONS: Record<IconId, React.ReactNode> = {
   // Chat bubble
   query: (
     <g fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinejoin="round" strokeLinecap="round">
-      <rect x={-9} y={-9} width={18} height={13} rx={3.5}/>
+      <rect x={-9} y={-9} width={18} height={13} rx={2}/>
       <path d="M -3,4 L -3,10 L 4,4"/>
       <line x1={-5} y1={-5} x2={5} y2={-5} strokeWidth={1.2}/>
       <line x1={-5} y1={-1} x2={5} y2={-1} strokeWidth={1.2}/>
@@ -76,8 +77,8 @@ const ICONS: Record<IconId, React.ReactNode> = {
   // Stacked documents
   loader: (
     <g fill="none" stroke="currentColor" strokeLinejoin="round" strokeLinecap="round">
-      <rect x={-5} y={-12} width={13} height={15} rx={2} strokeWidth={1.3} opacity={0.4} strokeDasharray="2.5 2"/>
-      <rect x={-9} y={-8} width={13} height={17} rx={2} strokeWidth={1.6}/>
+      <rect x={-5} y={-12} width={13} height={15} rx={1} strokeWidth={1.3} opacity={0.4} strokeDasharray="2.5 2"/>
+      <rect x={-9} y={-8} width={13} height={17} rx={1} strokeWidth={1.6}/>
       <path d="M 0,-8 L 0,-3 L 4,-3" strokeWidth={1.4}/>
       <line x1={-6} y1={1} x2={1} y2={1} strokeWidth={1.2}/>
       <line x1={-6} y1={4} x2={1} y2={4} strokeWidth={1.2}/>
@@ -130,11 +131,11 @@ const ICONS: Record<IconId, React.ReactNode> = {
   // Browser window
   browser: (
     <g fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinejoin="round">
-      <rect x={-10} y={-10} width={20} height={19} rx={3}/>
+      <rect x={-10} y={-10} width={20} height={19} rx={2}/>
       <line x1={-10} y1={-5} x2={10} y2={-5}/>
       <circle cx={-6.5} cy={-7.5} r={1.3} fill="currentColor" stroke="none"/>
       <circle cx={-2.5} cy={-7.5} r={1.3} fill="currentColor" stroke="none"/>
-      <rect x={-6} y={-2} width={12} height={2.5} rx={1} strokeWidth={1} opacity={0.4}/>
+      <rect x={-6} y={-2} width={12} height={2.5} rx={0.5} strokeWidth={1} opacity={0.4}/>
       <line x1={-6} y1={3} x2={6} y2={3} strokeWidth={1} opacity={0.35}/>
       <line x1={-6} y1={5.5} x2={2} y2={5.5} strokeWidth={1} opacity={0.25}/>
     </g>
@@ -145,13 +146,13 @@ const ICONS: Record<IconId, React.ReactNode> = {
       <ellipse cx={0} cy={-7} rx={8} ry={3}/>
       <path d="M -8,-7 L -8,5 Q -8,9 0,9 Q 8,9 8,5 L 8,-7" strokeLinejoin="round"/>
       <path d="M -8,-2.5 Q -8,1 0,1 Q 8,1 8,-2.5" strokeDasharray="2.5 2" opacity={0.55}/>
-      <text x={0} y={7} textAnchor="middle" fontSize={6} fill="currentColor" stroke="none" fontFamily="monospace" fontWeight={700} opacity={0.7}>SQL</text>
+      <text x={0} y={7} textAnchor="middle" fontSize={6} fill="currentColor" stroke="none" fontFamily="var(--font-jetbrains-mono), monospace" fontWeight={700} opacity={0.7}>SQL</text>
     </g>
   ),
   // Terminal prompt
   shell: (
     <g fill="none" stroke="currentColor" strokeLinecap="round">
-      <rect x={-10} y={-10} width={20} height={20} rx={3} strokeWidth={1.6}/>
+      <rect x={-10} y={-10} width={20} height={20} rx={2} strokeWidth={1.6}/>
       <polyline points="-6,-3 -1,0 -6,3" strokeWidth={1.9}/>
       <line x1={0} y1={5} x2={7} y2={5} strokeWidth={1.6}/>
     </g>
@@ -168,7 +169,7 @@ const ICONS: Record<IconId, React.ReactNode> = {
   // Input / inbox
   input: (
     <g fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinejoin="round">
-      <rect x={-9} y={-9} width={18} height={19} rx={2}/>
+      <rect x={-9} y={-9} width={18} height={19} rx={1}/>
       <line x1={-5} y1={-4} x2={5} y2={-4} strokeWidth={1.2}/>
       <line x1={-5} y1={0}  x2={5} y2={0}  strokeWidth={1.2}/>
       <line x1={-5} y1={4}  x2={1} y2={4}  strokeWidth={1.2}/>
@@ -193,18 +194,18 @@ const ICONS: Record<IconId, React.ReactNode> = {
       <circle cx={-5} cy={0} r={2.5} fill="currentColor" stroke="none"/>
     </g>
   ),
-  // 3×3 vector grid
+  // 3x3 vector grid
   embed: (
     <g fill="currentColor">
-      <rect x={-9} y={-9} width={5} height={5} rx={1}/>
-      <rect x={-2} y={-9} width={5} height={5} rx={1}/>
-      <rect x={5}  y={-9} width={5} height={5} rx={1} opacity={0.45}/>
-      <rect x={-9} y={-2} width={5} height={5} rx={1}/>
-      <rect x={-2} y={-2} width={5} height={5} rx={1}/>
-      <rect x={5}  y={-2} width={5} height={5} rx={1} opacity={0.45}/>
-      <rect x={-9} y={5}  width={5} height={5} rx={1} opacity={0.45}/>
-      <rect x={-2} y={5}  width={5} height={5} rx={1} opacity={0.45}/>
-      <rect x={5}  y={5}  width={5} height={5} rx={1} opacity={0.25}/>
+      <rect x={-9} y={-9} width={5} height={5} rx={0.5}/>
+      <rect x={-2} y={-9} width={5} height={5} rx={0.5}/>
+      <rect x={5}  y={-9} width={5} height={5} rx={0.5} opacity={0.45}/>
+      <rect x={-9} y={-2} width={5} height={5} rx={0.5}/>
+      <rect x={-2} y={-2} width={5} height={5} rx={0.5}/>
+      <rect x={5}  y={-2} width={5} height={5} rx={0.5} opacity={0.45}/>
+      <rect x={-9} y={5}  width={5} height={5} rx={0.5} opacity={0.45}/>
+      <rect x={-2} y={5}  width={5} height={5} rx={0.5} opacity={0.45}/>
+      <rect x={5}  y={5}  width={5} height={5} rx={0.5} opacity={0.25}/>
     </g>
   ),
   // Funnel
@@ -242,9 +243,9 @@ const SCENARIOS: Record<ScenarioKey, ScenarioDef> = {
     viewBox: "0 0 920 240",
     nodes: [
       { id: "query",  label: "User Query",   sub: "natural language", cx: 90,  cy: 120 },
-      { id: "loader", label: "Loader",        sub: "53 sources",       cx: 278, cy: 120 },
-      { id: "vs",     label: "Vector Store",  sub: "11 backends",      cx: 468, cy: 120 },
-      { id: "llm",    label: "LLM",           sub: "35 providers",     cx: 652, cy: 120 },
+      { id: "loader", label: "Loader",        sub: "83 sources",       cx: 278, cy: 120 },
+      { id: "vs",     label: "Vector Store",  sub: "32 backends",      cx: 468, cy: 120 },
+      { id: "llm",    label: "LLM",           sub: "46 providers",     cx: 652, cy: 120 },
       { id: "answer", label: "Answer",        sub: "streaming",        cx: 830, cy: 120 },
     ],
     edges: [
@@ -254,20 +255,27 @@ const SCENARIOS: Record<ScenarioKey, ScenarioDef> = {
       makeEdge("e4", 700, 120, 782, 120, undefined, undefined, undefined, 2500),
     ],
     steps: [
-      { nodeId: "query",  at: 0,    line: '>>> await rag.ask("What changed in Q1 2025?")' },
-      { nodeId: "loader", at: 600,  line: "→ Loading from 12 documents (PDF, Notion, S3)..." },
-      { nodeId: "vs",     at: 1300, line: "→ Searching pgvector — retrieved 8 chunks (score > 0.78)" },
-      { nodeId: "llm",    at: 2000, line: "→ Generating with gpt-4o-mini..." },
-      { nodeId: "answer", at: 2700, line: '✓ "Revenue grew 34% YoY driven by..."' },
+      { nodeId: "query",  at: 0,    line: 'await rag.ask("What changed in Q1 2025?")' },
+      { nodeId: "loader", at: 600,  line: "loading 12 documents (PDF, Notion, S3)" },
+      { nodeId: "vs",     at: 1300, line: "searching pgvector, retrieved 8 chunks (score > 0.78)" },
+      { nodeId: "llm",    at: 2000, line: "generating with gpt-4o-mini" },
+      { nodeId: "answer", at: 2700, line: 'return "Revenue grew 34% YoY driven by..."' },
     ],
     totalDuration: 5000,
+    code: `from synapsekit import RAG
+
+rag = RAG(model="gpt-4o-mini", api_key="sk-...")
+await rag.add("Q1 2025 earnings report...", metadata={"source": "10-Q"})
+
+async for token in rag.stream("What changed in Q1 2025?"):
+    print(token, end="", flush=True)`,
   },
 
   Agents: {
     viewBox: "0 0 920 300",
     nodes: [
       { id: "query",    label: "User Query",  sub: "task prompt",    cx: 80,  cy: 150 },
-      { id: "agent",    label: "ReAct Agent", sub: "think → act",    cx: 260, cy: 150 },
+      { id: "agent",    label: "ReAct Agent", sub: "think, act",    cx: 260, cy: 150 },
       { id: "browser",  label: "Browser",     sub: "Playwright",     cx: 460, cy: 60  },
       { id: "sql",      label: "SQL",         sub: "query executor", cx: 460, cy: 150 },
       { id: "shell",    label: "Shell",        sub: "bash executor",  cx: 460, cy: 240 },
@@ -285,15 +293,24 @@ const SCENARIOS: Record<ScenarioKey, ScenarioDef> = {
       makeEdge("e8", 698, 150, 792, 150, undefined, undefined, undefined, 2700),
     ],
     steps: [
-      { nodeId: "query",    at: 0,    line: '>>> await agent.run("Find top customers by revenue")' },
-      { nodeId: "agent",    at: 600,  line: "→ ReAct step 1: planning tool calls..." },
-      { nodeId: "browser",  at: 1300, line: "→ Tool: browser.navigate(dashboard_url)" },
-      { nodeId: "sql",      at: 1350, line: "→ Tool: sql.query(SELECT * FROM customers...)" },
-      { nodeId: "shell",    at: 1400, line: "→ Tool: shell.run('python analyze.py')" },
-      { nodeId: "llm",      at: 2100, line: "→ Synthesizing results from 3 tool calls..." },
-      { nodeId: "response", at: 2900, line: "✓ Top 10 customers identified · $0.0018 cost" },
+      { nodeId: "query",    at: 0,    line: 'await agent.run("Find top customers by revenue")' },
+      { nodeId: "agent",    at: 600,  line: "ReAct step 1, planning tool calls" },
+      { nodeId: "browser",  at: 1300, line: "tool: browser.navigate(dashboard_url)" },
+      { nodeId: "sql",      at: 1350, line: "tool: sql.query(SELECT * FROM customers ...)" },
+      { nodeId: "shell",    at: 1400, line: "tool: shell.run('python analyze.py')" },
+      { nodeId: "llm",      at: 2100, line: "synthesizing results from 3 tool calls" },
+      { nodeId: "response", at: 2900, line: "return top 10 customers, cost $0.0018" },
     ],
     totalDuration: 5200,
+    code: `from synapsekit import agent, tool
+
+@tool
+def sql_query(query: str) -> str:
+    """Run a read-only SQL query against the warehouse."""
+    return run(query)
+
+my_agent = agent(model="gpt-4o-mini", api_key="sk-...", tools=[sql_query])
+result = await my_agent.run("Find top customers by revenue")`,
   },
 
   Graph: {
@@ -303,7 +320,7 @@ const SCENARIOS: Record<ScenarioKey, ScenarioDef> = {
       { id: "split",    label: "Split",    sub: "route by type",     cx: 255, cy: 150 },
       { id: "classify", label: "Classify", sub: "label chunks",      cx: 455, cy: 60  },
       { id: "embed",    label: "Embed",    sub: "vector encode",     cx: 455, cy: 150 },
-      { id: "extract",  label: "Extract",  sub: "entities + dates",  cx: 455, cy: 240 },
+      { id: "extract",  label: "Extract",  sub: "entities, dates",  cx: 455, cy: 240 },
       { id: "merge",    label: "Merge",    sub: "aggregate results", cx: 645, cy: 150 },
       { id: "output",   label: "Output",   sub: "result payload",    cx: 840, cy: 150 },
     ],
@@ -318,15 +335,28 @@ const SCENARIOS: Record<ScenarioKey, ScenarioDef> = {
       makeEdge("e8", 693, 150, 792, 150, undefined, undefined, undefined, 2700),
     ],
     steps: [
-      { nodeId: "input",    at: 0,    line: '>>> await graph.run({"docs": batch_of_120})' },
-      { nodeId: "split",    at: 600,  line: "→ Node[split]: routing 120 docs to 3 parallel paths" },
-      { nodeId: "classify", at: 1300, line: "→ Node[classify]: labeling 40 chunks..." },
-      { nodeId: "embed",    at: 1350, line: "→ Node[embed]: encoding 40 chunks → vectors..." },
-      { nodeId: "extract",  at: 1400, line: "→ Node[extract]: pulling entities + dates..." },
-      { nodeId: "merge",    at: 2100, line: "→ Node[merge]: aggregating parallel results..." },
-      { nodeId: "output",   at: 2900, line: "✓ Pipeline complete · 847ms · $0.0031 total" },
+      { nodeId: "input",    at: 0,    line: 'await graph.run({"docs": batch_of_120})' },
+      { nodeId: "split",    at: 600,  line: "node[split]: routing 120 docs to 3 parallel paths" },
+      { nodeId: "classify", at: 1300, line: "node[classify]: labeling 40 chunks" },
+      { nodeId: "embed",    at: 1350, line: "node[embed]: encoding 40 chunks to vectors" },
+      { nodeId: "extract",  at: 1400, line: "node[extract]: pulling entities and dates" },
+      { nodeId: "merge",    at: 2100, line: "node[merge]: aggregating parallel results" },
+      { nodeId: "output",   at: 2900, line: "pipeline complete, 847ms, $0.0031 total" },
     ],
     totalDuration: 5200,
+    code: `from synapsekit.graph import StateGraph
+
+async def classify(state):
+    state["label"] = await classify_chunk(state["text"])
+    return state
+
+graph = StateGraph()
+graph.add_node("split", split_docs).add_node("classify", classify)
+graph.add_edge("split", "classify")
+graph.set_entry_point("split").set_finish_point("classify")
+
+compiled = graph.compile()
+result = await compiled.run({"docs": batch_of_120})`,
   },
 };
 
@@ -338,51 +368,39 @@ function FlowNode({ node, active, done }: { node: NodeDef; active: boolean; done
   const state = done ? "done" : active ? "active" : "idle";
 
   const cardStroke =
-    state === "done"   ? "#00A88C" :
-    state === "active" ? "#0047FF" :
-    "rgba(0,0,0,0.1)";
+    state === "done"   ? "var(--accent)" :
+    state === "active" ? "var(--ember)" :
+    "var(--border)";
 
   const cardFill =
-    state === "done"   ? "rgba(0,168,140,0.06)" :
-    state === "active" ? "rgba(0,71,255,0.06)"  :
-    "#ffffff";
+    state === "done"   ? "var(--accent-dim)" :
+    state === "active" ? "var(--ember-dim)"  :
+    "var(--surface)";
 
   const iconBg =
-    state === "done"   ? "rgba(0,168,140,0.14)" :
-    state === "active" ? "rgba(0,71,255,0.12)"  :
-    "rgba(0,0,0,0.04)";
+    state === "idle" ? "var(--surface2)" : "transparent";
 
   const iconColor =
-    state === "done"   ? "#00875A" :
-    state === "active" ? "#0047FF" :
-    "rgba(0,0,0,0.3)";
+    state === "done"   ? "var(--accent)" :
+    state === "active" ? "var(--ember)" :
+    "var(--text-muted)";
 
   const labelColor =
-    state === "done"   ? "#00875A" :
-    state === "active" ? "#0047FF" :
-    "rgba(0,0,0,0.75)";
+    state === "idle" ? "var(--text-muted)" : "var(--text)";
 
-  const subColor =
-    state === "done"   ? "rgba(0,135,90,0.7)" :
-    state === "active" ? "rgba(0,71,255,0.7)" :
-    "rgba(0,0,0,0.32)";
-
-  const glow =
-    state === "done"   ? "drop-shadow(0 0 10px rgba(0,168,140,0.25))" :
-    state === "active" ? "drop-shadow(0 0 12px rgba(0,71,255,0.22))"  :
-    "none";
+  const subColor = "var(--text-muted)";
 
   return (
-    <g style={{ filter: glow, transition: "filter 0.4s ease" }}>
+    <g>
       {/* Card */}
       <rect
         x={node.cx - NW} y={node.cy - NH}
         width={NW * 2} height={NH * 2}
-        rx={12}
+        rx={3}
         fill={cardFill}
         stroke={cardStroke}
         strokeWidth={state !== "idle" ? 1.5 : 1}
-        style={{ transition: "all 0.4s ease" }}
+        style={{ transition: "all 0.3s ease" }}
       />
 
       {/* Icon circle background */}
@@ -391,13 +409,13 @@ function FlowNode({ node, active, done }: { node: NodeDef; active: boolean; done
         cy={node.cy + ICO_DY}
         r={ICO_R}
         fill={iconBg}
-        style={{ transition: "fill 0.4s ease" }}
+        style={{ transition: "fill 0.3s ease" }}
       />
 
       {/* Icon */}
       <g
         transform={`translate(${node.cx}, ${node.cy + ICO_DY})`}
-        style={{ color: iconColor, transition: "color 0.4s ease" }}
+        style={{ color: iconColor, transition: "color 0.3s ease" }}
       >
         {getIcon(node.id)}
       </g>
@@ -410,7 +428,7 @@ function FlowNode({ node, active, done }: { node: NodeDef; active: boolean; done
         fontSize={10.5}
         fontWeight={700}
         fontFamily="var(--font-syne), sans-serif"
-        style={{ transition: "fill 0.4s ease" }}
+        style={{ transition: "fill 0.3s ease" }}
       >
         {node.label}
       </text>
@@ -422,7 +440,6 @@ function FlowNode({ node, active, done }: { node: NodeDef; active: boolean; done
         fill={subColor}
         fontSize={8.5}
         fontFamily="var(--font-jetbrains-mono), monospace"
-        style={{ transition: "fill 0.4s ease" }}
       >
         {node.sub}
       </text>
@@ -437,14 +454,14 @@ function FlowEdge({ edge, active }: { edge: EdgeDef; active: boolean }) {
     <g>
       <path
         d={edge.path}
-        stroke={active ? "rgba(0,71,255,0.35)" : "rgba(0,0,0,0.08)"}
+        stroke={active ? "var(--ember)" : "var(--border)"}
         strokeWidth={1.5}
         fill="none"
         strokeDasharray="5 4"
-        style={{ transition: "stroke 0.4s ease" }}
+        style={{ transition: "stroke 0.3s ease" }}
       />
       {active && (
-        <circle r={4.5} fill="#0047FF" opacity={0.85}>
+        <circle r={3.5} fill="var(--ember)">
           <animateMotion dur="0.65s" repeatCount="indefinite" path={edge.path} />
         </circle>
       )}
@@ -460,16 +477,17 @@ export default function AnimatedDemo() {
   const [doneSet, setDoneSet] = useState<Set<string>>(new Set());
   const [activeEdges, setActiveEdges] = useState<Set<string>>(new Set());
   const [outputLines, setOutputLines] = useState<string[]>([]);
-  const [cycleKey, setCycleKey] = useState(0);
+  const [running, setRunning] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  const runScenario = (key: ScenarioKey) => {
     setActiveSet(new Set());
     setDoneSet(new Set());
     setActiveEdges(new Set());
     setOutputLines([]);
+    setRunning(true);
 
-    const sc = SCENARIOS[scenario];
+    const sc = SCENARIOS[key];
     const timers: ReturnType<typeof setTimeout>[] = [];
 
     sc.steps.forEach((step, i) => {
@@ -488,6 +506,7 @@ export default function AnimatedDemo() {
       const lastId = sc.steps[sc.steps.length - 1].nodeId;
       setDoneSet(prev => new Set([...prev, lastId]));
       setActiveSet(prev => { const n = new Set(prev); n.delete(lastId); return n; });
+      setRunning(false);
     }, sc.steps[sc.steps.length - 1].at + 500));
 
     sc.edges.forEach(edge => {
@@ -496,9 +515,17 @@ export default function AnimatedDemo() {
       }, edge.particleAt));
     });
 
-    const replay = setTimeout(() => setCycleKey(k => k + 1), sc.totalDuration + 1500);
-    return () => { timers.forEach(clearTimeout); clearTimeout(replay); };
-  }, [scenario, cycleKey]);
+    return () => timers.forEach(clearTimeout);
+  };
+
+  useEffect(() => {
+    let cancel: (() => void) | undefined;
+    queueMicrotask(() => {
+      cancel = runScenario(scenario);
+    });
+    return () => cancel?.();
+     
+  }, [scenario]);
 
   useEffect(() => {
     if (terminalRef.current) terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
@@ -507,31 +534,28 @@ export default function AnimatedDemo() {
   const sc = SCENARIOS[scenario];
 
   return (
-    <section style={{ background: "var(--surface)" }} className="px-6 py-24">
+    <section style={{ background: "var(--surface)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }} className="px-6 py-24">
       <div className="mx-auto max-w-6xl">
 
         {/* Header */}
         <div className="mb-10 text-center">
-          <p style={{ color: "var(--accent)", fontFamily: "var(--font-jetbrains-mono)" }}
-            className="mb-3 text-xs font-medium tracking-widest uppercase">
-            Live Pipeline
-          </p>
           <h2 style={{ fontFamily: "var(--font-syne)", color: "var(--text)" }}
             className="text-3xl font-extrabold md:text-5xl">
-            Watch it run.
+            Watch a request move through the graph.
           </h2>
-          <p style={{ color: "var(--text-muted)" }} className="mt-3 text-base">
-            Every request flows through composable Python nodes — no magic, no black boxes.
+          <p style={{ color: "var(--text-muted)" }} className="mx-auto mt-3 max-w-xl text-base">
+            Every step below is a plain Python node. Run it once per tab, then read the
+            code that produced it.
           </p>
         </div>
 
         {/* Tabs */}
-        <div className="mb-6 flex justify-center gap-3">
+        <div className="mb-6 flex justify-center gap-2" style={{ borderBottom: "1px solid var(--border)" }}>
           {TABS.map(tab => (
             <button
               key={tab}
               className={`tab-btn ${scenario === tab ? "active" : ""}`}
-              onClick={() => { setScenario(tab); setCycleKey(0); }}
+              onClick={() => setScenario(tab)}
               aria-pressed={scenario === tab}
             >
               {tab}
@@ -541,26 +565,27 @@ export default function AnimatedDemo() {
 
         {/* Card */}
         <div style={{
-          background: "#ffffff",
+          background: "var(--surface)",
           border: "1px solid var(--border)",
-          borderRadius: "20px",
+          borderRadius: "var(--radius)",
           overflow: "hidden",
-          boxShadow: "0 4px 32px rgba(0,0,0,0.06)",
         }}>
           {/* Title bar */}
-          <div style={{ borderBottom: "1px solid var(--border)", background: "var(--bg)", padding: "12px 18px" }}
+          <div style={{ borderBottom: "1px solid var(--border)", background: "var(--bg)", padding: "10px 18px" }}
             className="flex items-center gap-2">
-            <span className="h-3 w-3 rounded-full bg-red-400/70"/>
-            <span className="h-3 w-3 rounded-full bg-yellow-400/70"/>
-            <span className="h-3 w-3 rounded-full bg-green-400/70"/>
-            <span style={{ color: "rgba(0,0,0,0.35)", fontFamily: "var(--font-jetbrains-mono)" }}
-              className="ml-3 text-xs">
-              synapsekit · {scenario.toLowerCase()}_pipeline.py
+            <span style={{ color: "var(--text-muted)", fontFamily: "var(--font-jetbrains-mono)" }}
+              className="text-xs">
+              {scenario.toLowerCase()}_pipeline.py
             </span>
             <div className="ml-auto flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"/>
-              <span style={{ color: "rgba(0,0,0,0.35)", fontFamily: "var(--font-jetbrains-mono)" }}
-                className="text-xs">live</span>
+              <span
+                style={{
+                  width: 6, height: 6, borderRadius: "50%",
+                  background: running ? "var(--ember)" : "var(--accent)",
+                }}
+              />
+              <span style={{ color: "var(--text-muted)", fontFamily: "var(--font-jetbrains-mono)" }}
+                className="text-xs">{running ? "running" : "done"}</span>
             </div>
           </div>
 
@@ -571,13 +596,9 @@ export default function AnimatedDemo() {
               className="w-full"
               style={{ maxHeight: "300px" }}
               preserveAspectRatio="xMidYMid meet"
+              role="img"
+              aria-label={`Diagram of the ${scenario} pipeline running`}
             >
-              <defs>
-                <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
-                  <circle cx="1" cy="1" r="1" fill="rgba(0,0,0,0.045)"/>
-                </pattern>
-              </defs>
-              <rect x="0" y="0" width="100%" height="100%" fill="url(#grid)"/>
               {sc.edges.map(edge => (
                 <FlowEdge key={edge.id} edge={edge} active={activeEdges.has(edge.id)}/>
               ))}
@@ -596,7 +617,7 @@ export default function AnimatedDemo() {
           <div style={{ borderTop: "1px solid var(--border)", background: "var(--bg)" }}>
             <div style={{ borderBottom: "1px solid var(--border)", padding: "8px 18px" }}
               className="flex items-center gap-2">
-              <span style={{ color: "rgba(0,0,0,0.3)", fontFamily: "var(--font-jetbrains-mono)" }}
+              <span style={{ color: "var(--text-muted)", fontFamily: "var(--font-jetbrains-mono)" }}
                 className="text-xs">output</span>
             </div>
             <div ref={terminalRef}
@@ -607,15 +628,15 @@ export default function AnimatedDemo() {
                   fontFamily: "var(--font-jetbrains-mono)",
                   fontSize: "0.8rem",
                   lineHeight: "1.8",
-                  color: line.startsWith("✓") ? "#00875A"
-                    : line.startsWith(">>>") ? "rgba(0,0,0,0.8)"
-                    : "rgba(0,0,0,0.45)",
+                  color: line.startsWith("return") ? "var(--accent)"
+                    : line.startsWith("await") ? "var(--text)"
+                    : "var(--text-muted)",
                   animation: "fadeSlideIn 0.3s ease forwards",
                 }}>
                   {line}
                 </div>
               ))}
-              {outputLines.length > 0 && (
+              {running && outputLines.length > 0 && (
                 <span className="cursor-blink" style={{
                   color: "var(--accent)",
                   fontFamily: "var(--font-jetbrains-mono)",
@@ -624,10 +645,22 @@ export default function AnimatedDemo() {
               )}
             </div>
           </div>
+
+          {/* Source */}
+          <div style={{ borderTop: "1px solid var(--border)" }}>
+            <div style={{ borderBottom: "1px solid var(--border)", padding: "8px 18px", background: "var(--bg)" }}
+              className="flex items-center gap-2">
+              <span style={{ color: "var(--text-muted)", fontFamily: "var(--font-jetbrains-mono)" }}
+                className="text-xs">source</span>
+            </div>
+            <pre className="code-block overflow-x-auto p-4 md:px-8 md:py-5" style={{ margin: 0 }}>
+              <code style={{ color: "var(--text)" }}>{sc.code}</code>
+            </pre>
+          </div>
         </div>
 
         <p style={{ color: "var(--text-muted)" }} className="mt-5 text-center text-sm">
-          Each node is plain Python. Swap, extend, or debug any step — no black boxes.
+          Each node is a plain async function. Swap, extend, or step through any of them in a debugger.
         </p>
       </div>
 

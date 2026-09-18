@@ -13,6 +13,7 @@ import Docs from "@/components/sections/Docs";
 import AnimatedDemo from "@/components/sections/AnimatedDemo";
 import Architecture from "@/components/sections/Architecture";
 import WhatsNew from "@/components/sections/WhatsNew";
+import FAQ from "@/components/sections/FAQ";
 
 export default function Home() {
   return (
@@ -32,6 +33,7 @@ export default function Home() {
         <Ecosystem />
         <Install />
         <Docs />
+        <FAQ />
       </main>
       <Footer />
     </>

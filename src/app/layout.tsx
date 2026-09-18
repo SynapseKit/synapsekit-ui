@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Syne, DM_Sans, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+import { FAQ } from "@/data/faq";
 
 const GA_ID = "G-NYPGFHGHKN";
 
@@ -167,104 +168,14 @@ const organizationSchema = {
 const faqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "What is SynapseKit?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "SynapseKit is an async-native, open-source Python framework for building LLM-powered applications. It provides RAG pipelines, ReAct agents, graph workflows, and AgentFederation with only 2 hard dependencies (numpy and rank-bm25). It supports 46 LLM providers, 83 document loaders, and 32 vector stores out of the box.",
-      },
+  mainEntity: FAQ.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
     },
-    {
-      "@type": "Question",
-      name: "Is SynapseKit a LangChain alternative?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes. SynapseKit is designed as a lightweight, async-native alternative to LangChain. It achieves the same capabilities (RAG, agents, tool use, graph workflows) with only 2 hard dependencies instead of LangChain's large dependency tree. It avoids hidden abstractions and gives developers full control over their LLM pipelines.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Is SynapseKit an alternative to LlamaIndex?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes. SynapseKit covers the same retrieval-augmented generation ground as LlamaIndex, including hybrid BM25 and vector search, reranking, and knowledge-graph retrieval, plus a broader scope: agents, graph workflows, guardrails, and verifiable audit trails, all with 2 hard dependencies instead of LlamaIndex's larger install footprint.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Does SynapseKit have guardrails or audit trails for agents?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes. SynapseKit ships a guardrails module that wraps any LLM with policy middleware (block, redact, flag, or require human review), including prompt-injection and jailbreak detection, PII redaction, and HIPAA/GDPR/PCI-DSS rulepacks. Separately, VerifiableAgent produces signed, hash-chained audit trails that an independent verifier can check for MATCH, DRIFT, or UNVERIFIABLE.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Does SynapseKit support async Python?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes, SynapseKit is async-native throughout. Every LLM call, loader, retriever, and agent supports async/await. This makes it suitable for production web applications, APIs, and high-throughput pipelines where blocking I/O would be a bottleneck.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "How do I install SynapseKit?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Install SynapseKit with pip: `pip install synapsekit`. For optional extras like specific vector stores or loaders, use extras such as `pip install synapsekit[chroma]`. Full installation docs are at https://synapsekit.github.io/synapsekit-docs/getting-started/installation.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Which LLM providers does SynapseKit support?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "SynapseKit supports 46 LLM providers including OpenAI, Anthropic Claude, Google Gemini, Mistral, Cohere, Ollama, LM Studio, xAI Grok, Groq, AWS Bedrock, Azure OpenAI, Together AI, Replicate, HuggingFace, and many more. Provider switching requires changing one line of code.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "What is RAG and how does SynapseKit support it?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "RAG (Retrieval-Augmented Generation) lets LLMs answer questions using your documents. SynapseKit provides a complete RAG pipeline with 83 document loaders (PDF, web, S3, databases, APIs), 32 vector stores (Chroma, Pinecone, Weaviate, Qdrant, pgvector, etc.), hybrid BM25+vector search, and reranking, all composable with a few lines of Python.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "What are ReAct agents in SynapseKit?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "ReAct agents in SynapseKit follow the Reason+Act pattern: the LLM reasons about a task, selects a tool, observes the result, and iterates. SynapseKit ships 56 built-in tools (web search, code execution, file I/O, APIs) and makes it easy to write custom tools as plain Python functions.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "What are Graph Workflows?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Graph Workflows let you define LLM pipelines as directed graphs with nodes (processing steps) and edges (transitions). Unlike linear chains, graphs support branching, loops, conditional routing, and parallel execution. SynapseKit's graph runtime also supports recursive subgraphs for complex multi-agent coordination.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Does SynapseKit have evaluation support?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes. SynapseKit includes EvalDataset, EvalRecord, and a PromptOptimizer for scoring prompt variants. There is also EvalCI: a free GitHub Action (github.com/SynapseKit/evalci) that runs your eval suite on every pull request, so regressions are caught before merging.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "What license is SynapseKit released under?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "SynapseKit is released under the Apache License 2.0. It is free to use, modify, and distribute for personal, academic, and commercial projects. There is no SaaS version, no paid tier, and no telemetry.",
-      },
-    },
-  ],
+  })),
 };
 
 const webSiteSchema = {

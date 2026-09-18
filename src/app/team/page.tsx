@@ -12,7 +12,7 @@ const TEAM = [
     avatar: "https://avatars.githubusercontent.com/u/34062684?v=4",
     bio: "NLP/LLM engineer and founder. Created SynapseKit: open-source LLM orchestration for engineers who ship.",
     location: null,
-    role: "Founder & Maintainer",
+    role: "Founder",
     contributions: 421,
     highlights: ["Architecture", "Core API", "RAG pipeline", "Releases"],
     github: "https://github.com/AmitoVrito",
@@ -23,7 +23,7 @@ const TEAM = [
     avatar: "https://avatars.githubusercontent.com/u/136477030?v=4",
     bio: "Builds distributed systems and AI infrastructure.",
     location: null,
-    role: "Core Contributor",
+    role: "Contributor",
     contributions: 150,
     highlights: ["SmartContextManager", "PrometheusMetrics", "AgentFederation", "StructuredOutput", "Benchmarks"],
     github: "https://github.com/DhruvGarg111",
@@ -34,7 +34,7 @@ const TEAM = [
     avatar: "https://avatars.githubusercontent.com/u/192120538?v=4",
     bio: "Works on reasoning systems and LLM optimization.",
     location: null,
-    role: "Core Contributor",
+    role: "Contributor",
     contributions: 55,
     highlights: ["ReasoningLLM", "CostQualityRouter", "PromptOptimizer", "ContinuousTrainer"],
     github: "https://github.com/Abhay-Mmmm",
@@ -251,7 +251,7 @@ const TEAM = [
   },
 ];
 
-const CORE = TEAM.filter(m => ["Founder & Maintainer", "Core Contributor"].includes(m.role));
+const FOUNDER = TEAM.filter(m => m.role === "Founder");
 const CONTRIBUTORS = TEAM.filter(m => m.role === "Contributor");
 
 export default function TeamPage() {
@@ -307,7 +307,7 @@ export default function TeamPage() {
           </p>
         </div>
 
-        {/* Core team */}
+        {/* Founder */}
         <div ref={ref} className="reveal" style={{ marginBottom: "4rem" }}>
           <h2 style={{
             fontFamily: "var(--font-syne)",
@@ -317,7 +317,7 @@ export default function TeamPage() {
             marginBottom: "1.5rem",
             letterSpacing: "-0.01em",
           }}>
-            Core team
+            Founder
           </h2>
 
           <div style={{
@@ -327,7 +327,7 @@ export default function TeamPage() {
             background: "var(--border)",
             border: "1px solid var(--border)",
           }}>
-            {CORE.map(member => (
+            {FOUNDER.map(member => (
               <a
                 key={member.login}
                 href={member.github}

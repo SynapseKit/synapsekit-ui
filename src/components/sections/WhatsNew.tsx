@@ -3,56 +3,121 @@
 import { useReveal } from "@/hooks/useReveal";
 
 const DOCS = "https://synapsekit.github.io/synapsekit-docs/docs";
+const CHANGELOG = "https://github.com/SynapseKit/SynapseKit/blob/main/CHANGELOG.md";
 
-const FEATURES = [
+const CATEGORIES: {
+  title: string;
+  items: { name: string; description: string; href: string }[];
+}[] = [
   {
-    icon: "📡",
-    label: "SynapseKit Live",
-    description:
-      "A zero-dependency, real-time dashboard. Every LLM call, tool, retrieval, memory write, and cost streams to your browser. Enable with one line, no extra deps.",
-    href: `${DOCS}/observability/live`,
+    title: "Trust and verification",
+    items: [
+      {
+        name: "Verifiable Agents",
+        description: "Signed, hash-chained audit trails with a standalone MATCH / DRIFT / UNVERIFIABLE verifier.",
+        href: `${DOCS}/audit`,
+      },
+      {
+        name: "Guardrails",
+        description: "Policy middleware for any LLM call: block, redact, flag, or require human review, with HIPAA/GDPR/PCI-DSS rulepacks.",
+        href: CHANGELOG,
+      },
+      {
+        name: "NeuroSymbolicAgent",
+        description: "The LLM proposes constraints, a Z3, SymPy, MiniZinc, or Prolog solver checks them before you trust the answer.",
+        href: `${DOCS}/agents/neuro-symbolic`,
+      },
+      {
+        name: "Orchestration eval",
+        description: "Detects handoff loops, per-transfer context loss, and non-deterministic mis-routing across multi-agent runs.",
+        href: CHANGELOG,
+      },
+    ],
   },
   {
-    icon: "🐳",
-    label: "Official Docker images",
-    description:
-      "docker pull ghcr.io/synapsekit/synapsekit: core (CLI + lib, multi-arch amd64/arm64) and all-extras variants, published on every release.",
-    href: `${DOCS}/getting-started/docker`,
+    title: "Memory and retrieval",
+    items: [
+      {
+        name: "Living Memory",
+        description: "Agents propose signed, diffable patches to their memory files instead of silently overwriting them.",
+        href: `${DOCS}/memory/living-memory`,
+      },
+      {
+        name: "Property Graph RAG, WorldModelRAG",
+        description: "Vector search fused with graph traversal, plus a temporal knowledge graph with causal links.",
+        href: `${DOCS}/rag/property-graph`,
+      },
+      {
+        name: "Personal Knowledge Mesh",
+        description: "Local-first, incremental indexing across every project on your machine, with a CLI and MCP tools.",
+        href: `${DOCS}/mesh`,
+      },
+      {
+        name: "Embeddings and reranker layer",
+        description: "A provider-agnostic BaseEmbeddings contract across 9 hosted providers, plus a Reranker interface.",
+        href: CHANGELOG,
+      },
+    ],
   },
   {
-    icon: "🕸",
-    label: "Open Knowledge Format",
-    description:
-      "Load OKF bundles as one document per concept, or ingest them as an extraction-free knowledge graph with WorldModelRAG.",
-    href: `${DOCS}/rag/okf`,
+    title: "Agents",
+    items: [
+      {
+        name: "AgentSwarm",
+        description: "Market-based routing across distributed agents: sealed-bid, Vickrey, English, and coalition auctions.",
+        href: `${DOCS}/agents/swarm`,
+      },
+      {
+        name: "SelfImprovingAgent",
+        description: "Eval-gated config evolution with signed patches and canary rollout. Every bad patch is blocked by the gate.",
+        href: `${DOCS}/agents/self-improving`,
+      },
+      {
+        name: "EdgeRuntime",
+        description: "Local-first inference with policy-gated cloud fallback and PII redaction before any data leaves the device.",
+        href: `${DOCS}/edge`,
+      },
+      {
+        name: "Dream Mode, Ambient daemon",
+        description: "Offline reflection over past runs, and a background daemon that watches for moments to intervene.",
+        href: CHANGELOG,
+      },
+      {
+        name: "Code Archaeology agent",
+        description: "Reasons across a repo's history: as-of scoping, drift detection, and generated change narratives.",
+        href: `${DOCS}/agents/time-travel`,
+      },
+      {
+        name: "Digital Twin, Hive Mode, Agent OS Shell",
+        description: "A versioned profile of your voice for drafting in your style, multi-agent coordination, and a local agent shell.",
+        href: `${DOCS}/agents/digital-twin`,
+      },
+    ],
   },
   {
-    icon: "🧠",
-    label: "Universal Memory Protocol",
-    description:
-      "A provider-agnostic memory-document standard with async read/write, [[wikilink]] extraction, and adapters for CLAUDE.md, Cursor, Aider, and Continue.",
-    href: `${DOCS}/memory/universal-protocol`,
-  },
-  {
-    icon: "🪞",
-    label: "Digital Twin Agent",
-    description:
-      "Learns a versioned profile of your voice and drafts commits, PRs, and reviews in your style, gated by an enforced delegation policy.",
-    href: `${DOCS}/agents/digital-twin`,
-  },
-  {
-    icon: "⏳",
-    label: "Time-Travel Codebase",
-    description:
-      "Reason across a repo's evolution: as-of history scoping, an AST evolution index, drift detection, and generated change narratives.",
-    href: `${DOCS}/agents/time-travel`,
-  },
-  {
-    icon: "🔏",
-    label: "Signed agent marketplace",
-    description:
-      "Ed25519-signed .agent bundles with per-file hashing and a hardened install flow, plus a self-hostable registry with signed reviews and eval-based ranking.",
-    href: `${DOCS}/agents/marketplace`,
+    title: "Operations",
+    items: [
+      {
+        name: "SynapseKit Live",
+        description: "A zero-dependency, real-time dashboard. Every LLM call, tool, retrieval, and cost streams to your browser.",
+        href: `${DOCS}/observability/live`,
+      },
+      {
+        name: "Official Docker images",
+        description: "docker pull ghcr.io/synapsekit/synapsekit: core and all-extras variants, published on every release.",
+        href: `${DOCS}/getting-started/docker`,
+      },
+      {
+        name: "CAG/RAG router",
+        description: "Routes between cache-augmented and retrieval-augmented generation, with a llama.cpp KV-cache backend.",
+        href: CHANGELOG,
+      },
+      {
+        name: "Signed agent marketplace, PC Twin",
+        description: "Ed25519-signed agent bundles with a hardened install flow, and a sandboxed environment for safe automation.",
+        href: `${DOCS}/agents/marketplace`,
+      },
+    ],
   },
 ];
 
@@ -62,69 +127,64 @@ export default function WhatsNew() {
   return (
     <section id="whats-new" style={{ background: "var(--bg)" }} className="px-6 py-24">
       <div className="mx-auto max-w-6xl">
-        <div ref={ref} className="reveal mb-12 text-center">
-          <p
-            style={{ color: "var(--text-muted)", fontFamily: "var(--font-jetbrains-mono)" }}
-            className="mb-3 text-xs font-medium"
-          >
-            What&apos;s new in v2.0.1
-          </p>
+        <div ref={ref} className="reveal mb-14 max-w-2xl">
           <h2
             style={{ fontFamily: "var(--font-syne)", color: "var(--text)" }}
             className="text-3xl font-extrabold md:text-5xl"
           >
-            Live observability and{" "}
-            <span style={{ color: "var(--accent)" }}>new paradigm agents.</span>
+            What&apos;s new
           </h2>
-          <p
-            style={{ color: "var(--text-muted)" }}
-            className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed md:text-base"
-          >
-            Additive, no breaking changes. Seven new capabilities, plus a security pass to{" "}
-            <strong style={{ color: "var(--text)" }}>0 known vulnerabilities</strong>.
+          <p style={{ color: "var(--text-muted)" }} className="mt-4 text-sm leading-relaxed md:text-base">
+            The 2.x line is about trust and autonomy in production: provable agent behavior,
+            self-managing memory, richer retrieval, local-first operation, and policy
+            enforcement at the LLM boundary. All additive, no breaking changes.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((f) => (
-            <a
-              key={f.label}
-              href={f.href}
-              style={{ border: "1px solid var(--border)", background: "var(--surface)", borderRadius: "var(--radius)" }}
-              className="group flex flex-col p-6 no-underline transition-colors hover:border-[var(--accent)]"
-            >
-              <div className="mb-3 text-2xl" aria-hidden>
-                {f.icon}
-              </div>
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
+          {CATEGORIES.map((cat) => (
+            <div key={cat.title}>
               <h3
-                style={{ fontFamily: "var(--font-syne)", color: "var(--text)" }}
-                className="mb-2 text-lg font-bold"
+                style={{ fontFamily: "var(--font-jetbrains-mono)", color: "var(--text-muted)" }}
+                className="mb-4 text-xs font-semibold"
               >
-                {f.label}
+                {cat.title}
               </h3>
-              <p
-                style={{ color: "var(--text-muted)" }}
-                className="flex-1 text-sm leading-relaxed"
-              >
-                {f.description}
-              </p>
-              <span
-                style={{ color: "var(--accent)", fontFamily: "var(--font-jetbrains-mono)" }}
-                className="mt-4 text-xs font-medium"
-              >
-                Learn more
-              </span>
-            </a>
+              <ul className="flex flex-col" style={{ borderTop: "1px solid var(--border)" }}>
+                {cat.items.map((item) => (
+                  <li key={item.name} style={{ borderBottom: "1px solid var(--border)" }}>
+                    <a
+                      href={item.href}
+                      target={item.href === CHANGELOG ? "_blank" : undefined}
+                      rel={item.href === CHANGELOG ? "noopener noreferrer" : undefined}
+                      className="group flex flex-col gap-1 py-4 no-underline"
+                    >
+                      <span
+                        style={{ fontFamily: "var(--font-syne)", color: "var(--text)" }}
+                        className="text-base font-bold transition-colors group-hover:text-[var(--accent)]"
+                      >
+                        {item.name}
+                      </span>
+                      <span style={{ color: "var(--text-muted)" }} className="text-sm leading-relaxed">
+                        {item.description}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
         </div>
 
-        <div className="mt-10 text-center">
+        <div className="mt-12">
           <a
-            href="https://synapsekit.github.io/synapsekit-docs/docs/changelog"
+            href={CHANGELOG}
+            target="_blank"
+            rel="noopener noreferrer"
             style={{ color: "var(--accent)", fontFamily: "var(--font-jetbrains-mono)" }}
             className="text-sm font-medium hover:underline"
           >
-            Read the full v2.0.1 changelog
+            Read the full changelog
           </a>
         </div>
       </div>

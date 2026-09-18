@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { useReveal } from "@/hooks/useReveal";
+
 const TEAM = [
   {
     login: "AmitoVrito",
@@ -253,6 +255,8 @@ const CORE = TEAM.filter(m => ["Founder & Maintainer", "Core Contributor"].inclu
 const CONTRIBUTORS = TEAM.filter(m => m.role === "Contributor");
 
 export default function TeamPage() {
+  const { ref } = useReveal();
+
   return (
     <main style={{ background: "var(--bg)", minHeight: "100vh" }}>
       {/* Back nav */}
@@ -275,7 +279,7 @@ export default function TeamPage() {
       <div className="mx-auto max-w-6xl px-6 py-20">
 
         {/* Header */}
-        <div className="reveal" style={{ maxWidth: "640px", marginBottom: "4rem" }}>
+        <div ref={ref} className="reveal" style={{ maxWidth: "640px", marginBottom: "4rem" }}>
           <p style={{
             fontFamily: "var(--font-jetbrains-mono)",
             fontSize: "12px",
@@ -304,7 +308,7 @@ export default function TeamPage() {
         </div>
 
         {/* Core team */}
-        <div className="reveal" style={{ marginBottom: "4rem" }}>
+        <div ref={ref} className="reveal" style={{ marginBottom: "4rem" }}>
           <h2 style={{
             fontFamily: "var(--font-syne)",
             fontSize: "1.1rem",
@@ -422,7 +426,7 @@ export default function TeamPage() {
         </div>
 
         {/* Contributors */}
-        <div className="reveal" style={{ marginBottom: "4rem" }}>
+        <div ref={ref} className="reveal" style={{ marginBottom: "4rem" }}>
           <h2 style={{
             fontFamily: "var(--font-syne)",
             fontSize: "1.1rem",
@@ -511,7 +515,7 @@ export default function TeamPage() {
         </div>
 
         {/* CTA */}
-        <div className="reveal" style={{
+        <div ref={ref} className="reveal" style={{
           borderRadius: "var(--radius)",
           border: "1px solid var(--border)",
           background: "var(--surface)",

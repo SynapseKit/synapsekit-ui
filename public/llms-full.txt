@@ -1,292 +1,298 @@
-# SynapseKit — Full Reference for LLMs
+# SynapseKit -- Full Reference for LLMs
 
-> Async-native Python framework for building LLM-powered applications: RAG pipelines, ReAct agents, graph workflows, and agent federation. 2 hard dependencies. Apache 2.0.
+> Async-native Python framework for building LLM-powered applications: RAG pipelines, agents, graph workflows, guardrails, verifiable audit trails, and agent federation. 2 hard dependencies. Apache 2.0.
 
 ## Overview
 
-SynapseKit is an open-source Python library that gives engineers the full power of modern LLM application patterns — RAG, agents, graph workflows, evaluation — without the bloat of a large dependency tree or opaque framework magic.
+SynapseKit is an open-source Python library that gives engineers the full power of modern LLM application patterns (RAG, agents, graph workflows, evaluation, guardrails, observability) without the bloat of a large dependency tree or opaque framework magic. It is a lightweight, transparent alternative to LangChain and LlamaIndex. Every abstraction is plain Python you can read, debug, and extend: no hidden chains, no global state, no lock-in.
 
-- Version: 1.9.1
+- Version: 2.0.1
 - License: Apache 2.0
-- Python: 3.9+
+- Python: 3.11+
 - Hard dependencies: 2 (numpy, rank-bm25)
-- Installation: `pip install synapsekit`
+- Installation: `pip install synapsekit[openai]` (or any provider extra)
 - GitHub: https://github.com/SynapseKit/SynapseKit
 - PyPI: https://pypi.org/project/synapsekit/
 - Docs: https://synapsekit.github.io/synapsekit-docs/
+- Website: https://synapse-kit.com
 - Discord: https://discord.gg/PSuAXHRywJ
 
-## Supported LLM Providers (33)
+All code examples below use real import paths and method names that exist in the `synapsekit` package (verified against `src/synapsekit/__init__.py` and the relevant source modules). Do not use `synapsekit.llms`, `achat()`, or a `RAG(vector_store=..., chunk_size=...)` constructor: these do not exist in the real SDK.
 
-OpenAI (GPT-4o, GPT-4, GPT-3.5), Anthropic Claude (claude-3-5-sonnet, claude-3-opus, claude-3-haiku), Google Gemini (1.5 Pro, 1.5 Flash, 2.0), Mistral (mistral-large, mistral-medium, mistral-small, mixtral), Cohere (command-r+, command-r), Ollama (any local model), LM Studio, xAI Grok, Groq (llama3, mixtral, gemma), AWS Bedrock, Azure OpenAI, Together AI, Replicate, HuggingFace, Novita AI, Writer AI, GPT4All, vLLM, Perplexity AI, DeepSeek, Qwen, Yi, Moonshot, Baidu ERNIE, Zhipu ChatGLM, Voyage, Fireworks AI, OpenRouter, Anyscale, OctoAI, Lepton AI.
-
-All providers implement the same async interface:
+## 10-Line Agent Example
 
 ```python
-from synapsekit.llms import OpenAILLM, AnthropicLLM, OllamaLLM
+from synapsekit import agent, tool
 
-# All interchangeable — one-line provider swap
-llm = OpenAILLM(model="gpt-4o")
-# llm = AnthropicLLM(model="claude-3-5-sonnet-20241022")
-# llm = OllamaLLM(model="llama3.2")
+@tool
+def get_weather(city: str) -> str:
+    """Get current weather for a city."""
+    return f"Sunny, 22C in {city}"
 
-response = await llm.achat("Explain RAG in one sentence.")
-print(response.content)
+my_agent = agent(
+    model="gpt-4o-mini",
+    api_key="sk-...",
+    tools=[get_weather],
+)
+
+print(my_agent.run("What's the weather in Tokyo?"))
 ```
+
+`agent()` (from `synapsekit.agents.facade`) is a factory that builds a `SimpleAgent` running a ReAct loop. Signature: `agent(model, api_key="", tools=None, memory=False, provider=None, system_prompt="You are a helpful AI assistant.")`. The `@tool` decorator (from `synapsekit.agents.tool_decorator`) wraps any plain sync or async function into a `BaseTool`, inferring the name and description from the function signature and docstring when used bare.
+
+## LLM Providers (46)
+
+Every provider implements the same `BaseLLM` interface and is auto-detected from the model name: `gpt-4o` -> OpenAI, `claude-*` -> Anthropic, `gemini-*` -> Google. Full roster: OpenAI, Anthropic, Google Gemini, Azure OpenAI, AWS Bedrock, Vertex AI, Mistral, Cohere, Groq, Hugging Face, Cloudflare, Databricks, Perplexity, Replicate, xAI (Grok), Baidu ERNIE, DeepSeek, Ollama, Together AI, OpenRouter, Fireworks AI, Cerebras, SambaNova, NovitaAI, Writer, AI21 Labs, Aleph Alpha, Minimax, Moonshot, Zhipu, LM Studio, llama.cpp, vLLM, GPT4All, MLX, NVIDIA NIM, watsonx.ai, Snowflake Cortex, DeepInfra, Nebius, Baseten, Upstage, Reka, Hyperbolic, FriendliAI, Clarifai.
+
+```python
+from synapsekit.llm import LLMConfig, OpenAILLM, AnthropicLLM
+
+llm = OpenAILLM(LLMConfig(model="gpt-4o-mini", api_key="sk-...", provider="openai"))
+# swap provider without touching calling code:
+# llm = AnthropicLLM(LLMConfig(model="claude-3-5-sonnet-20241022", api_key="sk-ant-...", provider="anthropic"))
+
+response = await llm.generate("Explain RAG in one sentence.")
+print(response)
+
+async for token in llm.stream("Explain RAG in one sentence."):
+    print(token, end="", flush=True)
+```
+
+`BaseLLM` defines an abstract `stream()` that yields tokens; `generate()` collects the stream into a single string. There is no `chat()` or `achat()` method.
+
+### ReasoningAgent: automatic fast/reasoning routing
+
+```python
+from synapsekit import ReasoningAgent, ReasoningAgentConfig
+from synapsekit.agents.tools import CalculatorTool
+from synapsekit.llm import LLMConfig, OpenAILLM, ReasoningLLM
+
+reasoning_agent = ReasoningAgent(
+    ReasoningAgentConfig(
+        fast_llm=OpenAILLM(LLMConfig(model="gpt-4o-mini", api_key="sk-...", provider="openai")),
+        reasoning_llm=ReasoningLLM(model="o3", api_key="sk-..."),
+        tools=[CalculatorTool()],
+        agent_type="function_calling",
+    )
+)
+
+answer = await reasoning_agent.run("Solve: find the eigenvalues of [[2,1],[1,2]]")
+```
+
+`ReasoningLLM` (from `synapsekit.llm.reasoning`) unifies o1/o3, Claude extended thinking, Gemini thinking, DeepSeek R1, and Qwen QwQ behind one adapter with a thinking trace. `ReasoningAgent` routes simple requests to the fast model and escalates to the reasoning model only when needed.
 
 ## RAG Pipeline
 
-A full RAG pipeline with document loading, chunking, embedding, vector storage, and retrieval:
+The `RAG` facade (`from synapsekit import RAG`, backed by `synapsekit.rag.facade.RAG`) gives a 3-line pipeline with sane defaults: an in-memory vector store, BM25-aware retrieval, conversation memory, and token tracing built in.
 
 ```python
-from synapsekit.rag import RAG
-from synapsekit.rag.loaders import PDFLoader, WebLoader
-from synapsekit.rag.vector_stores import ChromaStore
-from synapsekit.llms import OpenAILLM
+from synapsekit import RAG
 
-# Load documents
+rag = RAG(model="gpt-4o-mini", api_key="sk-...")
+
+rag.add("SynapseKit is an async-first Python framework for LLM applications.")
+rag.add("It ships 46 LLM providers and 32 vector stores behind one interface.")
+
+async for token in rag.stream("What is SynapseKit?"):
+    print(token, end="", flush=True)
+
+answer = await rag.ask("How many vector stores does it support?")
+print(answer)
+```
+
+`RAG.__init__` accepts `model`, `api_key`, `provider`, `embedding_model` (default `all-MiniLM-L6-v2`), `rerank`, `memory_window`, `retrieval_top_k`, `system_prompt`, `temperature`, `max_tokens`, `trace`, `auto_eval`, `evaluator`, and `graph_store` (pass `NetworkXPropertyGraphBackend()` or a `Neo4jPropertyGraphBackend(...)` here to fuse vector search with knowledge-graph traversal). `add()` is sync (wraps `add_async()` and auto-detects multimodal file paths); `ask()` and `stream()` are async.
+
+### Loading documents
+
+```python
+from synapsekit.loaders.pdf import PDFLoader
+
 loader = PDFLoader("docs/report.pdf")
-documents = await loader.aload()
+documents = await loader.aload()   # or loader.load() for sync
 
-# Build the RAG pipeline
+for doc in documents:
+    rag.add(doc.text, metadata=doc.metadata)
+```
+
+All 83 loaders return `list[Document]` (`doc.text`, `doc.metadata`) and expose both a sync `.load()` and async `.aload()`.
+
+### Production RAG with quality evaluation and alerting
+
+```python
+from synapsekit import RAG, RAGEvaluator, SlackWebhookAlertSink
+
 rag = RAG(
-    llm=OpenAILLM(model="gpt-4o"),
-    vector_store=ChromaStore(collection="my-docs"),
-    chunk_size=512,
-    chunk_overlap=64,
-    top_k=5,
+    model="gpt-4o-mini",
+    api_key="sk-...",
+    evaluator=RAGEvaluator(
+        judge_llm=judge_llm,          # a cheaper judge model
+        sample_rate=0.1,
+        alert_sinks=[SlackWebhookAlertSink(webhook_url=SLACK_WEBHOOK_URL)],
+    ),
+    auto_eval=True,
 )
 
-# Index
-await rag.aadd_documents(documents)
+answer = await rag.ask("What changed in the release notes?")
+await rag.wait_for_evaluations()
 
-# Query
-answer = await rag.aquery("What are the key findings?")
-print(answer.content)
-print(answer.sources)  # list of source chunks with metadata
+metrics = rag.tracer.summary()
+print(metrics["avg_rag_benefit_to_cost"])
+print(metrics["total_rag_alerts"])
 ```
 
-## ReAct Agent
+## Agents
 
-An agent that uses tools in a Reason+Act loop:
+### ReAct agent with tools
 
 ```python
-from synapsekit.agents import Agent
-from synapsekit.tools import WebSearchTool, CalculatorTool, WikipediaTool
-from synapsekit.llms import OpenAILLM
+from synapsekit import agent
+from synapsekit.agents.tools import CalculatorTool, WikipediaTool
 
-agent = Agent(
-    llm=OpenAILLM(model="gpt-4o"),
-    tools=[WebSearchTool(), CalculatorTool(), WikipediaTool()],
-    max_iterations=10,
-    verbose=True,
+my_agent = agent(
+    model="gpt-4o",
+    api_key="sk-...",
+    tools=[CalculatorTool(), WikipediaTool()],
+    memory=True,
 )
 
-result = await agent.arun("What is the current population of Tokyo, and how does it compare to New York City?")
-print(result.output)
-print(result.steps)   # full reasoning trace
+result = my_agent.run("What is the population of Tokyo divided by 1000?")
+print(result)
 ```
 
-### Custom Tools
+`agent()` builds a `SimpleAgent` wrapping an `AgentExecutor` running a ReAct loop (`agent_type="react"`, `max_iterations=10`). Pass `memory=True` to attach a `ConversationMemory`.
+
+### Custom tools
 
 ```python
-from synapsekit.tools import tool
+from synapsekit import tool
 
-@tool(description="Fetch the latest price of a stock ticker symbol.")
+@tool(name="get_stock_price", description="Fetch the latest price of a stock ticker symbol.")
 async def get_stock_price(ticker: str) -> str:
     # your implementation
     return f"${price}"
 
-agent = Agent(llm=llm, tools=[get_stock_price])
+my_agent = agent(model="gpt-4o-mini", api_key="sk-...", tools=[get_stock_price])
 ```
 
-## Graph Workflow
-
-A directed graph workflow with branching and parallel execution:
+### AgentSwarm: market-based multi-agent routing
 
 ```python
-from synapsekit.graph import Graph, Node, Edge
-from synapsekit.llms import OpenAILLM
+from synapsekit import AgentSwarm, AgentMetadata
 
-llm = OpenAILLM(model="gpt-4o")
+swarm = AgentSwarm()
+swarm.register_agent(AgentMetadata(id="code_agent", model="claude-3-5-sonnet-20241022", tags=["code", "debug"]))
+swarm.register_agent(AgentMetadata(id="research_agent", model="gpt-4o", tags=["research", "search"]))
 
-# Define nodes
-async def classify(state):
-    result = await llm.achat(f"Classify this as 'technical' or 'general': {state['query']}")
-    state["category"] = result.content.strip().lower()
+result = await swarm.run("Debug this Python function and cite any relevant docs.")
+print(result.output)
+```
+
+`AgentSwarm` (from `synapsekit.agents`, constructed with an optional `agents`, `market: MarketPolicy`, `registry`, and `reputation: Reputation`) routes prompts across registered agents using a market policy (sealed-bid, Vickrey, English, or coalition auctions by default), with reputation tracking (`Reputation`, `ReputationSnapshot`, `RedisReputation`). `AgentFederation` and `AgentRegistry` (in-memory or Redis) provide the lower-level registry `AgentSwarm` sits on top of, for teams that want simpler cost/capacity-based routing without market bidding.
+
+## Graph Workflows
+
+`StateGraph` (from `synapsekit.graph`) is a fluent builder for DAG-based async pipelines. Nodes run in waves; independent nodes execute concurrently.
+
+```python
+from synapsekit import StateGraph
+from synapsekit.llm import LLMConfig, OpenAILLM
+
+llm = OpenAILLM(LLMConfig(model="gpt-4o-mini", api_key="sk-...", provider="openai"))
+
+async def classify(state: dict) -> dict:
+    result = await llm.generate(f"Classify this as 'technical' or 'general': {state['query']}")
+    state["category"] = result.strip().lower()
     return state
 
-async def answer_technical(state):
-    result = await llm.achat(f"Answer this technical question: {state['query']}")
-    state["answer"] = result.content
+async def answer_technical(state: dict) -> dict:
+    state["answer"] = await llm.generate(f"Answer this technical question: {state['query']}")
     return state
 
-async def answer_general(state):
-    result = await llm.achat(f"Answer this in plain language: {state['query']}")
-    state["answer"] = result.content
+async def answer_general(state: dict) -> dict:
+    state["answer"] = await llm.generate(f"Answer this in plain language: {state['query']}")
     return state
 
-# Build graph
-graph = Graph()
-graph.add_node(Node("classify", classify))
-graph.add_node(Node("technical", answer_technical))
-graph.add_node(Node("general", answer_general))
+graph = StateGraph()
+graph.add_node("classify", classify)
+graph.add_node("technical", answer_technical)
+graph.add_node("general", answer_general)
 
-graph.add_edge(Edge("classify", "technical", condition=lambda s: s["category"] == "technical"))
-graph.add_edge(Edge("classify", "general", condition=lambda s: s["category"] == "general"))
+graph.add_conditional_edge(
+    "classify",
+    lambda s: s["category"],
+    {"technical": "technical", "general": "general"},
+)
+graph.set_entry_point("classify")
+graph.set_finish_point("technical")
+graph.set_finish_point("general")
 
-graph.set_entry("classify")
-
-result = await graph.arun({"query": "How does backpropagation work?"})
+compiled = graph.compile()
+result = await compiled.run({"query": "How does backpropagation work?"})
 print(result["answer"])
+```
+
+`StateGraph` supports typed state with reducers (`synapsekit.graph.state.StateField`, `TypedState`), checkpointing (`InMemoryCheckpointer`, `SQLiteCheckpointer`, `JSONFileCheckpointer`), human-in-the-loop interrupts (`GraphInterrupt`, `approval_node`), SSE/websocket streaming (`sse_stream`, `ws_stream`), fan-out/fan-in (`fan_out_node`), recursive subgraphs (`subgraph_node`), and Mermaid export (`get_mermaid_with_trace`).
+
+## Guardrails
+
+`GuardedLLM` (from `synapsekit.guardrails`) wraps any `BaseLLM` with a `GuardrailPolicy`: input guards (prompt-injection, jailbreak, topic restriction, max-cost), output guards (PII redaction, toxicity, citation checks, Pydantic schema validation via `SchemaGuard`), and block/redact/flag/require_human enforcement modes.
+
+```python
+from synapsekit.guardrails import GuardedLLM, GuardrailPolicy
+from synapsekit.guardrails.input_guards import PromptInjectionGuard
+from synapsekit.guardrails.output_guards import PIIRedactionGuard
+from synapsekit.llm import LLMConfig, OpenAILLM
+
+base_llm = OpenAILLM(LLMConfig(model="gpt-4o-mini", api_key="sk-...", provider="openai"))
+
+policy = GuardrailPolicy(
+    input_guards=[PromptInjectionGuard()],
+    output_guards=[PIIRedactionGuard()],
+    audit=True,
+)
+
+guarded_llm = GuardedLLM(base_llm, policy)
+response = await guarded_llm.generate("Summarize this document for the customer.")
+```
+
+HIPAA, GDPR, and PCI-DSS rulepacks are available in `synapsekit.guardrails.rulepacks`. Guardrail decisions are pure-Python (no extra dependency) and publish `guardrail.*` events to SynapseKit Live (rule names and counts only, never raw text).
+
+## Verifiable Agents
+
+`VerifiableAgent` (from `synapsekit.audit`) is a transparent proxy: it wraps any existing agent object without changing its code, and every call made *through the proxy* is captured as a signed, hash-chained `AuditRecord` (Ed25519 by default, pluggable KMS/BYOK). A standalone verifier checks bundle integrity offline and returns `MATCH`, `DRIFT`, or `UNVERIFIABLE`.
+
+```python
+from synapsekit import AuditTracer, VerifiableAgent, export_audit_bundle, verify_audit_bundle
+from synapsekit.audit.signer import Ed25519SigningProvider, SigningPolicy
+
+tracer = AuditTracer()
+verifiable = VerifiableAgent(my_agent, tracer=tracer)
+
+result = await verifiable.run("Refund order #4821 if the return window hasn't closed.")
+records = tracer.drain()
+
+policy = SigningPolicy(Ed25519SigningProvider())
+bundle_path = export_audit_bundle(records, policy, "run.audit.zip")
+
+verification = verify_audit_bundle(bundle_path)
+print(verification.verdict)  # Verdict.MATCH / Verdict.DRIFT / Verdict.UNVERIFIABLE
 ```
 
 ## Evaluation with @eval_case
 
-```python
-from synapsekit.eval import eval_case, EvalDataset, run_evals
-
-@eval_case(input="What is RAG?", expected_contains=["retrieval", "augmented", "generation"])
-async def test_rag_definition(input: str) -> str:
-    response = await rag.aquery(input)
-    return response.content
-
-@eval_case(input="What is the capital of France?", expected_contains=["Paris"])
-async def test_geography(input: str) -> str:
-    response = await llm.achat(input)
-    return response.content
-
-# Run all eval cases
-results = await run_evals()
-print(results.summary())  # pass rate, latency, cost breakdown
-```
-
-## AgentFederation
-
-Route tasks across specialized agents:
+The `@eval_case` decorator (from `synapsekit.evaluation.decorators`, also exported at top level) marks a sync or async function as an evaluation case. It stays a normal callable, so it runs under pytest or `synapsekit test`. The function itself returns a `{"score": ..., "cost_usd": ..., "latency_ms": ...}` dict; the decorator sets pass/fail thresholds.
 
 ```python
-from synapsekit.federation import AgentFederation, AgentRegistry
-from synapsekit.agents import Agent
-from synapsekit.llms import OpenAILLM, AnthropicLLM
+from synapsekit import eval_case
 
-registry = AgentRegistry()
-
-# Register specialized agents
-registry.register("code_agent", Agent(
-    llm=AnthropicLLM(model="claude-3-5-sonnet-20241022"),
-    tools=[CodeExecutionTool()],
-    description="Handles coding and debugging tasks",
-))
-
-registry.register("research_agent", Agent(
-    llm=OpenAILLM(model="gpt-4o"),
-    tools=[WebSearchTool(), WikipediaTool()],
-    description="Handles research and information lookup tasks",
-))
-
-federation = AgentFederation(registry=registry, router_llm=OpenAILLM(model="gpt-4o-mini"))
-
-# The federation automatically routes to the right agent
-result = await federation.arun("Debug this Python function: ...")
+@eval_case(min_score=0.8, max_cost_usd=0.05, tags=["rag", "qa"])
+async def test_rag_definition() -> dict:
+    answer = await rag.ask("What is RAG?")
+    score = 1.0 if "retrieval" in answer.lower() else 0.0
+    return {"score": score, "cost_usd": rag.tracer.summary()["estimated_cost_usd"]}
 ```
 
-## Document Loaders (53)
-
-**File formats:** PDFLoader, DOCXLoader, PPTXLoader, XLSXLoader, CSVLoader, JSONLoader, JSONLLoader, XMLLoader, HTMLLoader, MarkdownLoader, TextLoader, LaTeXLoader, TSVLoader, RTFLoader, EPUBLoader
-
-**Cloud storage:** S3Loader, AzureBlobLoader, GCSLoader, DropboxLoader, OneDriveLoader
-
-**Databases:** MongoDBLoader, DynamoDBLoader, RedisLoader, ElasticsearchLoader, BigQueryLoader, PostgreSQLLoader, SQLiteLoader
-
-**APIs & SaaS:** HubSpotLoader, SalesforceLoader, AirtableLoader, NotionLoader, ConfluenceLoader, JiraLoader, SlackLoader, GitHubLoader
-
-**Web:** WebLoader, SitemapLoader, YouTubeLoader, RSSLoader
-
-**Multimedia:** AudioLoader (Whisper), VideoLoader, ImageLoader
-
-**Productivity:** ObsidianLoader, ConfigLoader, EmailLoader
-
-**Code:** PythonLoader, JavaScriptLoader, GitLoader
-
-## Vector Stores (11)
-
-| Store | Hosted | Self-hosted | Notes |
-|---|---|---|---|
-| Chroma | No | Yes | Default, easy setup |
-| Pinecone | Yes | No | Serverless option |
-| Weaviate | Yes | Yes | GraphQL interface |
-| Qdrant | Yes | Yes | Rust-based, fast |
-| Milvus | No | Yes | Billion-scale |
-| pgvector | No | Yes | Postgres extension |
-| Redis | Yes | Yes | RedisSearch module |
-| MongoDB Atlas | Yes | No | Atlas Vector Search |
-| SQLiteVec | No | Yes | Zero infra, local |
-| FAISS | No | Yes | Facebook, in-memory |
-| InMemory | No | N/A | Testing and prototyping |
-
-## Comparison
-
-| Feature | SynapseKit | LangChain | LlamaIndex |
-|---|---|---|---|
-| Hard dependencies | **2** | 60+ | 40+ |
-| Async-native | **Yes** | Partial | Partial |
-| LLM providers | **33** | 30+ | 20+ |
-| Document loaders | **53** | 100+ | 50+ |
-| Vector stores | **11** | 15+ | 15+ |
-| Graph workflows | **Built-in** | LangGraph (separate pkg) | Yes |
-| Agent federation | **Yes** | No | No |
-| Built-in eval | **Yes (free)** | LangSmith (paid) | Yes |
-| EvalCI GitHub Action | **Yes** | No | No |
-| Prompt optimizer | **Yes** | No | No |
-| Continuous trainer | **Yes** | No | No |
-| Prometheus metrics | **Built-in** | No | No |
-| Helm chart | **Yes** | No | No |
-| Structured output | **Pydantic, retries** | Partial | Partial |
-| Agent memory | **4 backends** | Partial | Partial |
-| Context management | **Hierarchical + caching** | Basic | Basic |
-| Telemetry | **None** | Optional | Optional |
-| License | **Apache 2.0** | MIT | MIT |
-
-## Architecture Deep Dive
-
-SynapseKit follows a layered architecture:
-
-```
-synapsekit/
-├── llms/           # 33 provider adapters, all implementing BaseLLM
-├── rag/
-│   ├── loaders/    # 53 document loaders, all implementing BaseLoader
-│   ├── chunkers/   # Fixed, recursive, semantic, agentic chunking
-│   ├── embedders/  # OpenAI, Cohere, HuggingFace, local embeddings
-│   └── stores/     # 11 vector stores, all implementing BaseVectorStore
-├── agents/
-│   ├── react.py    # ReAct runtime
-│   ├── memory.py   # AgentMemory (SQLite/Redis/Postgres/in-memory)
-│   └── tools.py    # Tool registry and @tool decorator
-├── graph/          # Graph workflow engine
-├── federation/     # AgentFederation + AgentRegistry
-├── eval/           # EvalDataset, EvalRecord, PromptOptimizer
-├── output/         # StructuredOutput with Pydantic validation
-├── context/        # SmartContextManager + Anthropic caching
-├── metrics/        # PrometheusMetrics + Grafana dashboards
-└── tools/          # 47+ built-in tool implementations
-```
-
-Every component communicates through typed dataclasses. There are no hidden state mutations, no global registries, and no monkey-patching.
-
-## Key Design Principles
-
-1. **Minimal dependencies** — 2 hard deps. Optional extras pulled in only when needed.
-2. **Async-first** — Every I/O operation is async. Sync wrappers available for REPL use.
-3. **No hidden chains** — You compose pipelines explicitly. No magic `|` operators that hide data flow.
-4. **Provider-agnostic** — Swap any LLM, loader, or vector store by changing one import.
-5. **Observable** — Built-in Prometheus metrics and structured logging on every component.
-6. **Testable** — Every component is mockable. InMemory backends for all stores in tests.
-
-## EvalCI GitHub Action
-
-EvalCI (https://github.com/SynapseKit/evalci) is a free GitHub Action that runs your SynapseKit eval suite on every pull request and posts results as a PR comment.
+Run the suite locally with `synapsekit eval` / `pytest` or wire it into CI with EvalCI (https://github.com/SynapseKit/evalci), a free GitHub Action that runs your `@eval_case` suite on every pull request and blocks merge on quality regression:
 
 ```yaml
 # .github/workflows/eval.yml
@@ -303,7 +309,165 @@ jobs:
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
 ```
 
-## Community & Contributing
+## Vector Stores (32)
+
+All implement `VectorStore` with `add()`, `search()`, `search_mmr()`, `save()`, and `load()`. The built-in `InMemoryVectorStore` needs zero extra dependencies; everything else is `pip install synapsekit[name]`.
+
+Chroma, FAISS, Qdrant, Pinecone, Weaviate, Milvus, LanceDB, PGVector, SQLiteVec, MongoDB Atlas, Redis, Elasticsearch, OpenSearch, Supabase, Cassandra, DuckDB, ClickHouse, Marqo, Typesense, Vespa, Zilliz, Turbopuffer, Azure AI Search, Vertex AI Vector Search, SingleStore, TiDB Vector, Couchbase, SurrealDB, DeepLake, MyScale.
+
+## Data Loaders (83)
+
+All return `list[Document]` with `.text` and `.metadata`, with a sync `.load()` and async `.aload()`.
+
+**File formats:** PDF, DOCX, PPTX, XLSX, CSV, JSON, JSONL, XML, HTML, Markdown, Text, LaTeX, TSV, RTF, EPUB, Parquet
+**Cloud storage:** S3, Azure Blob, GCS, Dropbox, OneDrive, Google Drive
+**Databases:** MongoDB, DynamoDB, Redis, Elasticsearch, BigQuery, PostgreSQL, MySQL, SQLite, Snowflake, Supabase
+**APIs and SaaS:** HubSpot, Salesforce, Airtable, Notion, Confluence, Jira, Slack, Discord, GitHub, Linear, Stripe, Twilio, Google Calendar, Google Sheets, Firebase
+**Web and media:** URL/Web, Sitemap, YouTube, RSS, arXiv, PubMed, Wikipedia, Reddit, Email (IMAP), Audio (Whisper), Video, Image, Git repo
+**Knowledge:** Obsidian, Open Knowledge Format (OKF)
+
+## Agent Tools (56)
+
+All implement `BaseTool` with a single async `run()`. Categories: web search (DuckDuckGo, Google, Tavily, Bing, Brave), knowledge (Wikipedia, arXiv, PubMed, WolframAlpha), productivity (Slack, Discord, GitHub, Jira, Notion, Linear, Stripe, Twilio, Google Calendar), execution (Python REPL, Shell, SQL Query, Code Interpreter, Browser via Playwright), file I/O (FileRead, FileWrite, FileList, PDFReader), and media (Image Analysis, Image Generation, Speech-to-Text, Text-to-Speech, Translation, Sentiment Analysis, Summarization).
+
+## Comparison
+
+| Feature | SynapseKit | LangChain | LlamaIndex |
+|---|---|---|---|
+| Hard dependencies | **2** | 50+ | 20+ |
+| Install size | **~5 MB** | ~200 MB+ | ~100 MB+ |
+| Async-native | **Default** | Partial | Partial |
+| Streaming | **Default** | Varies | Varies |
+| LLM providers | **46** | 38+ | 20+ |
+| Vector stores | **32** | 15+ | 15+ |
+| Data loaders | **83** | 100+ | 50+ |
+| Agent tools | **56 built-in** | Community plugins | Community plugins |
+| Embeddings/reranker providers | **9** | Varies | Varies |
+| Agent memory backends | **10 built-in** | Community plugins | Community plugins |
+| Graph workflows | **Built-in** | LangGraph (separate package) | No |
+| Agent federation / swarm | **Built-in, market-based** | No | No |
+| Guardrails | **Built-in, policy middleware** | No | No |
+| Verifiable audit trails | **Signed, hash-chained** | No | No |
+| Reasoning LLMs | **Unified adapter** | Manual | Manual |
+| Structured output | **Provider-agnostic, Pydantic, retries** | Provider-specific | Provider-specific |
+| Cost tracking | **Built-in** | LangSmith (SaaS) | No |
+| Evaluation / EvalCI | **Free CLI + GitHub Action** | LangSmith (SaaS) | Built-in |
+| Observability | **Prometheus + Grafana** | No | No |
+| Type safety | **Strict dataclasses** | Partial | Partial |
+| Telemetry | **None** | Optional | Optional |
+| License | **Apache 2.0** | MIT | MIT |
+
+## Architecture Deep Dive
+
+```
+synapsekit/
+|-- llm/            # 46 provider adapters, all implementing BaseLLM; ReasoningLLM, CostQualityRouter, EdgeRuntime
+|-- rag/             # RAG facade, RAGPipeline
+|-- retrieval/        # 32 vector stores (VectorStore), rerankers, hybrid/HyDE/RAG-fusion/property-graph/world-model retrievers
+|-- loaders/          # 83 document loaders
+|-- embeddings/       # BaseEmbeddings contract, 9 hosted providers
+|-- agents/
+|   |-- facade.py     # agent() factory
+|   |-- tool_decorator.py  # @tool decorator
+|   |-- 56 built-in BaseTool implementations
+|-- graph/            # StateGraph DAG engine, checkpointers, interrupts, SSE streaming
+|-- guardrails/       # GuardedLLM, GuardrailPolicy, input/output guards, HIPAA/GDPR/PCI rulepacks
+|-- audit/            # VerifiableAgent, signed hash-chained audit trails, verify()
+|-- memory/           # AgentMemory, LivingMemory, 10 persistence backends
+|-- symbolic/         # NeuroSymbolicAgent (Z3, SymPy, MiniZinc, Prolog backends)
+|-- evaluation/        # eval_case, RAGEvaluator, PromptOptimizer, EvalSuite
+|-- training/         # ContinuousTrainer, FeedbackCollector, A/B routing, rollout guards
+|-- observability/     # PrometheusMetrics, CostTracker, DistributedTracer
+|-- live/             # SynapseKit Live real-time dashboard
+|-- mesh/             # Personal Knowledge Mesh, local-first incremental indexing
+|-- dream/            # Dream Mode: offline trace consolidation into memory patches
+`-- twin/             # DigitalTwinAgent, style-matching draft agent
+```
+
+Every component communicates through typed dataclasses. There are no hidden state mutations, no global registries, and no monkey-patching.
+
+## What's New in 2.x
+
+The 2.x line is about trust and autonomy in production: provable agent behavior, self-managing memory, richer retrieval, local-first operation, and policy enforcement at the LLM boundary.
+
+**Trust and verification**
+- Verifiable Agents: signed, hash-chained audit trails (Ed25519, pluggable KMS/BYOK) with a standalone verifier
+- Guardrails: policy middleware for any `BaseLLM`, prompt-injection and jailbreak guards, PII redaction, HIPAA/GDPR/PCI-DSS rulepacks
+- NeuroSymbolicAgent: LLM-proposed constraints checked by Z3, SymPy, MiniZinc, or Prolog
+- Orchestration Eval: detects handoff loops, per-transfer context loss, and non-deterministic mis-routing across multi-agent runs
+
+**Memory and retrieval**
+- Living Memory: agents propose signed, diffable memory patches instead of overwriting files
+- Property Graph RAG and WorldModelRAG: vector search fused with graph traversal and temporal, causal knowledge graphs
+- Personal Knowledge Mesh: local-first incremental indexing across your machine, with a `synapsekit mesh` CLI and MCP tools
+- A dedicated embeddings and reranker provider layer (9 hosted providers)
+
+**Agents**
+- AgentSwarm: market-based routing (sealed-bid, Vickrey, English, coalition auctions) with reputation learning
+- SelfImprovingAgent: eval-gated config evolution with signed patches and canary rollout
+- EdgeRuntime: local-first inference with policy-gated cloud fallback and on-device PII redaction
+- Hive Mode, Agent OS Shell, Dream Mode, Ambient daemon, and a Code Archaeology agent
+
+**Operations**
+- SynapseKit Live: a zero-dependency real-time dashboard for every LLM call, tool, retrieval, and cost
+- Official Docker images on GHCR, a CAG/RAG router with a llama.cpp KV-cache backend, and a sandboxed PC Twin for safe automation
+
+Full history: https://github.com/SynapseKit/SynapseKit/blob/main/CHANGELOG.md
+
+## Key Design Principles
+
+1. **Minimal dependencies.** 2 hard deps. Optional extras pulled in only when needed.
+2. **Async-first.** Every I/O operation is async. Sync wrappers available for scripts and notebooks.
+3. **No hidden chains.** You compose pipelines explicitly. No magic pipe operators that hide data flow.
+4. **Provider-agnostic.** Swap any LLM, loader, or vector store by changing one import.
+5. **Observable.** Built-in Prometheus metrics, cost tracking, and structured tracing on every component.
+6. **Verifiable.** Signed, hash-chained audit trails turn agent behavior into a replayable, checkable record.
+
+## SynapseKit Live
+
+A zero-dependency, real-time dashboard built into the framework, using only the Python standard library.
+
+```bash
+# Zero-touch: set one env var and run your program as usual
+SYNAPSEKIT_LIVE=1 python your_agent.py
+
+# From the CLI
+synapsekit ui --live   # serves http://127.0.0.1:7900
+
+# From code
+python -c "from synapsekit.live import enable; enable()"
+```
+
+Bound to localhost, token-gated, zero overhead when the env var isn't set.
+
+## Installation
+
+```bash
+pip install synapsekit[openai]       # OpenAI
+pip install synapsekit[anthropic]    # Anthropic + prompt caching
+pip install synapsekit[ollama]       # Ollama (local)
+pip install synapsekit[performance]  # orjson + uvloop + xxhash (faster)
+pip install synapsekit[observe]      # OpenTelemetry + Prometheus metrics
+pip install synapsekit[training]     # Continuous fine-tuning pipeline
+pip install synapsekit[all]          # Everything
+```
+
+```bash
+uv add synapsekit[openai]
+poetry add synapsekit[openai]
+```
+
+Docker (official images on GHCR, no Python setup required):
+
+```bash
+docker pull ghcr.io/synapsekit/synapsekit:latest      # core + CLI
+docker pull ghcr.io/synapsekit/synapsekit:all          # batteries-included
+docker run --rm ghcr.io/synapsekit/synapsekit --version
+```
+
+Full installation guide: https://synapsekit.github.io/synapsekit-docs/docs/getting-started/installation
+
+## Community and Contributing
 
 - GitHub: https://github.com/SynapseKit/SynapseKit
 - Discord: https://discord.gg/PSuAXHRywJ
@@ -312,3 +476,4 @@ jobs:
 - Contributing guide: https://github.com/SynapseKit/SynapseKit/blob/main/CONTRIBUTING.md
 - Changelog: https://github.com/SynapseKit/SynapseKit/blob/main/CHANGELOG.md
 - Docs: https://synapsekit.github.io/synapsekit-docs/
+- Website: https://synapse-kit.com

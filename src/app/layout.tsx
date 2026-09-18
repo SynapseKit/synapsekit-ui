@@ -30,13 +30,14 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://synapse-kit.com"),
   title: {
     template: "%s | SynapseKit",
-    default: "SynapseKit: Python LLM Framework",
+    default: "SynapseKit: Python LLM Framework, LangChain Alternative",
   },
   description:
-    "Async-native Python LLM framework for RAG pipelines, ReAct agents, and graph workflows. A lightweight LangChain alternative with 2 dependencies, 46 LLM providers, 83 document loaders, and 32 vector stores. Open source, Apache 2.0.",
+    "Async-native Python framework for RAG, agents, and graph workflows. A lightweight, open source LangChain and LlamaIndex alternative with 2 hard dependencies, 46 LLM providers, and no hidden abstractions.",
   keywords: [
     "python llm framework",
     "langchain alternative",
+    "llamaindex alternative",
     "rag pipeline python",
     "llm agents python",
     "open source llm",
@@ -51,6 +52,8 @@ export const metadata: Metadata = {
     "synapsekit",
     "llm eval python",
     "open source ai framework",
+    "python rag framework",
+    "llm guardrails python",
   ],
   authors: [
     {
@@ -63,7 +66,7 @@ export const metadata: Metadata = {
   category: "technology",
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
   openGraph: {
-    title: "SynapseKit: Python LLM Framework",
+    title: "SynapseKit: Python LLM Framework, LangChain Alternative",
     description:
       "Async-native Python LLM framework for RAG pipelines, ReAct agents, and graph workflows. 2 dependencies, 46 providers, 83 loaders. No lock-in.",
     url: "https://synapse-kit.com",
@@ -75,13 +78,13 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "SynapseKit: Python LLM Framework",
+        alt: "SynapseKit: Python LLM Framework, LangChain Alternative",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "SynapseKit: Python LLM Framework",
+    title: "SynapseKit: Python LLM Framework, LangChain Alternative",
     description:
       "Async-native Python LLM framework for RAG pipelines, ReAct agents, and graph workflows. 2 dependencies, 46 providers, 83 loaders. No lock-in.",
     site: "@synapsekitai",
@@ -179,6 +182,22 @@ const faqSchema = {
       acceptedAnswer: {
         "@type": "Answer",
         text: "Yes. SynapseKit is designed as a lightweight, async-native alternative to LangChain. It achieves the same capabilities (RAG, agents, tool use, graph workflows) with only 2 hard dependencies instead of LangChain's large dependency tree. It avoids hidden abstractions and gives developers full control over their LLM pipelines.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is SynapseKit an alternative to LlamaIndex?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. SynapseKit covers the same retrieval-augmented generation ground as LlamaIndex, including hybrid BM25 and vector search, reranking, and knowledge-graph retrieval, plus a broader scope: agents, graph workflows, guardrails, and verifiable audit trails, all with 2 hard dependencies instead of LlamaIndex's larger install footprint.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Does SynapseKit have guardrails or audit trails for agents?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. SynapseKit ships a guardrails module that wraps any LLM with policy middleware (block, redact, flag, or require human review), including prompt-injection and jailbreak detection, PII redaction, and HIPAA/GDPR/PCI-DSS rulepacks. Separately, VerifiableAgent produces signed, hash-chained audit trails that an independent verifier can check for MATCH, DRIFT, or UNVERIFIABLE.",
       },
     },
     {

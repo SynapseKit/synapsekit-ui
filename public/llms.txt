@@ -1,90 +1,110 @@
 # SynapseKit
 
-> Async-native Python framework for building LLM-powered applications: RAG pipelines, ReAct agents, graph workflows, and agent federation. 2 hard dependencies. Apache 2.0.
+> Async-native Python framework for building LLM-powered applications: RAG pipelines, agents, graph workflows, guardrails, and agent federation. 2 hard dependencies. Apache 2.0.
 
 ## Overview
 
-SynapseKit is an open-source Python library for engineers who want to ship LLM-powered features without inheriting a large dependency tree or opaque abstractions. It is a lightweight alternative to LangChain and LlamaIndex.
+SynapseKit is an open-source Python library for engineers who want to ship LLM-powered features without inheriting a large dependency tree or opaque abstractions. It is a lightweight alternative to LangChain and LlamaIndex: build production RAG apps, tool-using agents, and DAG-based graph workflows with 2 hard dependencies and a plain-Python, no-hidden-chains API.
 
-- Version: 1.9.1
+- Version: 2.0.1
 - License: Apache 2.0
-- Language: Python 3.9+
+- Language: Python 3.11+
 - Hard dependencies: 2 (numpy, rank-bm25)
 - GitHub: https://github.com/SynapseKit/SynapseKit
 - PyPI: https://pypi.org/project/synapsekit/
 - Docs: https://synapsekit.github.io/synapsekit-docs/
+- Website: https://synapse-kit.com
 - Discord: https://discord.gg/PSuAXHRywJ
 
 ## Key Capabilities
 
-- **33 LLM providers** — OpenAI, Anthropic Claude, Google Gemini, Mistral, Cohere, Ollama, LM Studio, xAI Grok, Groq, AWS Bedrock, Azure OpenAI, Together AI, Replicate, HuggingFace, GPT4All, vLLM, and more
-- **53 document loaders** — PDF, DOCX, HTML, Markdown, CSV, JSON, JSONL, Parquet, S3, Azure Blob, GCS, MongoDB, DynamoDB, Elasticsearch, Redis, BigQuery, YouTube, Sitemap, Airtable, HubSpot, Salesforce, Obsidian, OneDrive, Dropbox, and more
-- **11 vector stores** — Chroma, Pinecone, Weaviate, Qdrant, Milvus, pgvector, Redis, MongoDB Atlas, SQLiteVec, FAISS, in-memory
-- **47+ built-in tools** — web search, code execution, file I/O, calculator, weather, Wikipedia, SQL, REST APIs, browser automation (Playwright), and more
-- **RAG pipelines** — hybrid BM25+vector search, reranking, multimodal (audio/video/image), configurable chunking
-- **ReAct agents** — tool use with Reason+Act loop, custom tools as plain Python functions
-- **Graph workflows** — directed graphs with branching, loops, conditional routing, parallel execution, recursive subgraphs
-- **AgentFederation** — distributed multi-agent routing via in-memory or Redis registry
-- **Async-native** — every component supports async/await throughout
-- **Evaluation** — EvalDataset, EvalRecord, PromptOptimizer, EvalCI GitHub Action
+- **46 LLM providers** behind one `BaseLLM` interface, auto-detected from the model name (`gpt-4o` -> OpenAI, `claude-*` -> Anthropic, `gemini-*` -> Google). OpenAI, Anthropic, Gemini, Azure OpenAI, AWS Bedrock, Vertex AI, Mistral, Cohere, Groq, Hugging Face, Ollama, LM Studio, llama.cpp, vLLM, DeepSeek, Together AI, OpenRouter, Fireworks, Cerebras, and more.
+- **32 vector stores** behind one `VectorStore` interface: Chroma, Pinecone, Weaviate, Qdrant, Milvus, LanceDB, pgvector, Redis, MongoDB Atlas, SQLiteVec, FAISS, Elasticsearch, OpenSearch, Turbopuffer, Azure AI Search, Vertex AI Vector Search, DeepLake, and a zero-dependency `InMemoryVectorStore`.
+- **83 data loaders** returning `list[Document]` with a sync `.load()` and async `.aload()`: PDF, DOCX, HTML, Markdown, CSV, Parquet, S3, Azure Blob, GCS, MongoDB, DynamoDB, Elasticsearch, BigQuery, YouTube, Sitemap, Airtable, Notion, Confluence, Jira, Slack, GitHub, and audio/video via Whisper.
+- **56 built-in agent tools** implementing `BaseTool`, plus a `@tool` decorator to turn any plain Python function (sync or async) into a tool.
+- **9 embeddings and reranker providers** behind a `BaseEmbeddings` contract and a `Reranker` interface (OpenAI, Cohere, Voyage, Jina, Gemini, Mistral, Mixedbread, Hugging Face, plus local ONNX).
+- **10 agent memory backends**: SQLite, Redis, PostgreSQL, DynamoDB, MongoDB, Firestore, Cosmos DB, Cassandra, Memcached, in-memory.
+- **RAG pipelines**: `RAG` facade with `.add()`, `.ask()`, `.stream()`, hybrid BM25 + vector retrieval, reranking, conversation memory, token tracing, and an optional graph store for hybrid vector + knowledge-graph retrieval.
+- **Agents**: ReAct loop (any LLM) and native function calling (OpenAI, Anthropic, Gemini, Mistral) via the `agent()` factory or `ReActAgent`/`FunctionCallingAgent`. `ReasoningAgent` auto-routes between a fast model and a reasoning model (o1/o3, Claude thinking, DeepSeek R1, Qwen QwQ).
+- **Graph workflows**: `StateGraph` builder for DAG-based async pipelines with conditional routing, typed state, fan-out/fan-in, SSE streaming, human-in-the-loop interrupts, checkpointing, and Mermaid export.
+- **Guardrails**: `GuardedLLM` policy middleware wrapping any `BaseLLM`, with block/redact/flag/require-human modes, prompt-injection and jailbreak input guards, PII-redaction and toxicity/citation output guards, and HIPAA/GDPR/PCI-DSS rulepacks.
+- **Verifiable agents**: signed, hash-chained audit trails (Ed25519, pluggable KMS/BYOK) with a standalone verifier returning `MATCH` / `DRIFT` / `UNVERIFIABLE`.
+- **AgentSwarm and AgentFederation**: market-based multi-agent routing (sealed-bid, Vickrey, English, coalition auctions) with reputation learning, plus a simpler in-memory or Redis agent registry.
+- **SynapseKit Live**: a zero-dependency, real-time local dashboard streaming every LLM call, tool call, retrieval, DB write, knowledge-graph update, cost, and human approval.
+- **Evaluation**: `@eval_case` suites, `RAGEvaluator`, `PromptOptimizer`, `ContinuousTrainer`, and EvalCI, a free GitHub Action that runs eval suites on every PR and blocks merge on quality regression.
+- **Async-native and streaming-first** throughout, with sync wrappers for scripts and notebooks.
 
 ## Architecture
 
 SynapseKit is structured as a collection of composable modules:
 
-- `synapsekit.llms` — LLM provider adapters (all implement a common async interface)
-- `synapsekit.rag` — Document loaders, chunkers, embedders, vector stores, retrievers
-- `synapsekit.agents` — ReAct agent runtime, tool registry, AgentMemory
-- `synapsekit.graph` — Graph workflow engine with node/edge primitives
-- `synapsekit.federation` — AgentFederation, AgentRegistry (in-memory + Redis)
-- `synapsekit.eval` — EvalDataset, EvalRecord, PromptOptimizer, ContinuousTrainer
-- `synapsekit.tools` — 47+ built-in tool implementations
-- `synapsekit.output` — StructuredOutput with Pydantic validation and retries
-- `synapsekit.memory` — AgentMemory with SQLite/Redis/Postgres backends
-- `synapsekit.context` — SmartContextManager with Anthropic prompt caching
+- `synapsekit.llm` -- 46 LLM provider adapters, all implementing `BaseLLM`
+- `synapsekit.rag` -- `RAG` facade and `RAGPipeline`
+- `synapsekit.retrieval` -- vector stores, rerankers, and retrieval strategies (hybrid, HyDE, RAG-fusion, property-graph, world-model)
+- `synapsekit.loaders` -- 83 document loaders
+- `synapsekit.embeddings` -- embeddings and reranker providers
+- `synapsekit.agents` -- `agent()` factory, `ReActAgent`, `FunctionCallingAgent`, `AgentSwarm`, `AgentFederation`, `AgentRegistry`, 56 built-in tools, `@tool` decorator
+- `synapsekit.graph` -- `StateGraph` DAG workflow engine, checkpointers, human-in-the-loop interrupts
+- `synapsekit.guardrails` -- `GuardedLLM`, `GuardrailPolicy`, input/output guards, compliance rulepacks
+- `synapsekit.audit` -- `VerifiableAgent`, signed hash-chained audit trails, `verify()`
+- `synapsekit.memory` -- `AgentMemory`, `LivingMemory`, 10 persistence backends
+- `synapsekit.symbolic` -- `NeuroSymbolicAgent` with Z3/SymPy/MiniZinc/Prolog backends
+- `synapsekit.evaluation` -- `eval_case`, `RAGEvaluator`, `PromptOptimizer`
+- `synapsekit.training` -- `ContinuousTrainer`, A/B routing, rollout guards
+- `synapsekit.observability` -- `PrometheusMetrics`, cost tracking, tracing
+- `synapsekit.live` -- SynapseKit Live real-time dashboard
 
 ## Installation
 
 ```
-pip install synapsekit
+pip install synapsekit[openai]
 ```
 
-Optional extras:
-- `pip install synapsekit[chroma]` — Chroma vector store
-- `pip install synapsekit[pinecone]` — Pinecone vector store
-- `pip install synapsekit[qdrant]` — Qdrant vector store
-- `pip install synapsekit[browser]` — Playwright browser tool
-- `pip install synapsekit[audio]` — Whisper audio loader
+Optional extras (install only what you use):
+- `pip install synapsekit[anthropic]` -- Anthropic + prompt caching
+- `pip install synapsekit[chroma]` / `[pinecone]` / `[qdrant]` -- vector stores
+- `pip install synapsekit[browser]` -- Playwright browser tool
+- `pip install synapsekit[observe]` -- OpenTelemetry + Prometheus metrics
+- `pip install synapsekit[all]` -- everything
 
-Full installation guide: https://synapsekit.github.io/synapsekit-docs/getting-started/installation
+Docker: `docker pull ghcr.io/synapsekit/synapsekit:latest` (core) or `:all` (batteries-included), published automatically on every release.
+
+Full installation guide: https://synapsekit.github.io/synapsekit-docs/docs/getting-started/installation
 
 ## Comparison
 
 | Feature | SynapseKit | LangChain | LlamaIndex |
 |---|---|---|---|
-| Hard dependencies | 2 | 60+ | 40+ |
-| Async-native | Yes | Partial | Partial |
-| LLM providers | 33 | 30+ | 20+ |
-| Document loaders | 53 | 100+ | 50+ |
-| Vector stores | 11 | 15+ | 15+ |
-| Graph workflows | Yes | LangGraph (separate) | Yes |
-| Agent federation | Yes | No | No |
-| Built-in eval | Yes | LangSmith (paid) | Yes |
-| EvalCI GitHub Action | Yes | No | No |
+| Hard dependencies | 2 | 50+ | 20+ |
+| Install size | ~5 MB | ~200 MB+ | ~100 MB+ |
+| Async-native | Default | Partial | Partial |
+| LLM providers | 46 | 38+ | 20+ |
+| Vector stores | 32 | 15+ | 15+ |
+| Data loaders | 83 | 100+ | 50+ |
+| Agent tools | 56 built-in | Community plugins | Community plugins |
+| Graph workflows | Built-in | LangGraph (separate package) | No |
+| Agent federation / swarm | Built-in, market-based | No | No |
+| Guardrails | Built-in, policy middleware | No | No |
+| Verifiable audit trails | Signed, hash-chained | No | No |
+| Cost tracking | Built-in | LangSmith (SaaS) | No |
+| Evaluation / EvalCI | CLI + free GitHub Action | LangSmith (SaaS) | Built-in |
+| Observability | Prometheus + Grafana | No | No |
 | License | Apache 2.0 | MIT | MIT |
-| Telemetry | None | Optional | Optional |
+
+LangChain has more raw integrations and more tutorials. SynapseKit optimizes for a different problem: shipping, debugging, and maintaining an LLM feature in production, where readable code, predictable async behavior, and no surprise SaaS bills actually matter.
 
 ## Documentation
 
-- Getting started: https://synapsekit.github.io/synapsekit-docs/getting-started/installation
-- RAG pipelines: https://synapsekit.github.io/synapsekit-docs/rag/overview
-- Agents: https://synapsekit.github.io/synapsekit-docs/agents/overview
-- Graph workflows: https://synapsekit.github.io/synapsekit-docs/graph/overview
-- LLM providers: https://synapsekit.github.io/synapsekit-docs/llms/overview
-- Tools: https://synapsekit.github.io/synapsekit-docs/tools/overview
-- Evaluation: https://synapsekit.github.io/synapsekit-docs/eval/overview
+- Quickstart: https://synapsekit.github.io/synapsekit-docs/docs/getting-started/quickstart
+- RAG: https://synapsekit.github.io/synapsekit-docs/docs/rag/pipeline
+- Agents: https://synapsekit.github.io/synapsekit-docs/docs/agents/overview
+- Graph workflows: https://synapsekit.github.io/synapsekit-docs/docs/graph/overview
+- LLM providers: https://synapsekit.github.io/synapsekit-docs/docs/llms/overview
+- Verifiable agents / audit: https://synapsekit.github.io/synapsekit-docs/docs/audit/
+- EvalCI: https://synapsekit.github.io/synapsekit-docs/docs/evalci/overview
+- API reference: https://synapsekit.github.io/synapsekit-docs/docs/api/llm
 - Changelog: https://github.com/SynapseKit/SynapseKit/blob/main/CHANGELOG.md
-- Architecture: https://synapsekit.github.io/synapsekit-docs/architecture
+- Installation: https://synapsekit.github.io/synapsekit-docs/docs/getting-started/installation
 
 ## Community
 

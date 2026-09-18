@@ -11,7 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     {
-      url: "https://synapse-kit.com/team",
+      url: "https://synapse-kit.com/team/",
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.6,
